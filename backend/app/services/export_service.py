@@ -17,7 +17,7 @@ class ExportService:
         writer = csv.writer(output)
         
         # Header
-        writer.writerow(['QuantLab Options Analysis Export'])
+        writer.writerow(['OptionLab Options Analysis Export'])
         writer.writerow(['Generated:', datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
         writer.writerow([])
         
@@ -71,7 +71,7 @@ class ExportService:
         writer = csv.writer(output)
         
         # Header
-        writer.writerow(['QuantLab Strategy Analysis Export'])
+        writer.writerow(['OptionLab Strategy Analysis Export'])
         writer.writerow(['Generated:', datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
         writer.writerow([])
         

@@ -1,5 +1,5 @@
 /**
- * API Client - typed axios client for QuantLab backend.
+ * API Client - typed axios client for OptionLab backend.
  * Handles all HTTP communication with FastAPI backend.
  */
 import axios from 'axios';

@@ -1,1 +1,1 @@
-"""QuantLab Backend Application."""
+"""OptionLab Backend Application."""

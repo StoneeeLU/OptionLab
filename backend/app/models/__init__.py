@@ -1,1 +1,1 @@
-"""Core domain models for QuantLab options analysis."""
+"""Core domain models for OptionLab options analysis."""

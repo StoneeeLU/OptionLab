@@ -1,4 +1,4 @@
-"""QuantLab FastAPI Main Application."""
+"""OptionLab FastAPI Main Application."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import health, options, analysis, watchlist, export
@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 
 app = FastAPI(
-    title="QuantLab API",
+    title="OptionLab API",
     description="Options Analysis and Valuation Platform",
     version="0.1.0",
 )

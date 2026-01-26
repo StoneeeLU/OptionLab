@@ -12,14 +12,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     // Load from localStorage or default to dark
-    const saved = localStorage.getItem('quantlab-theme');
+    const saved = localStorage.getItem('optionlab-theme');
     return (saved === 'light' || saved === 'dark') ? saved : 'dark';
   });
 
   useEffect(() => {
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('quantlab-theme', theme);
+    localStorage.setItem('optionlab-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

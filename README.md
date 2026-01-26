@@ -1,4 +1,4 @@
-# QuantLab - Options Analysis & Valuation Platform
+# OptionLab - Options Analysis & Valuation Platform
 
 **A comprehensive options analysis platform for identifying mispriced options through theoretical pricing, Greeks analysis, volatility modeling, and multi-leg strategy evaluation.**
 
@@ -309,7 +309,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📧 Contact
 
-**Project Repository**: [https://github.com/StoneeeLU/QuantLab](https://github.com/StoneeeLU/QuantLab)
+**Project Repository**: [https://github.com/StoneeeLU/OptionLab](https://github.com/StoneeeLU/OptionLab)
 
 ---
 

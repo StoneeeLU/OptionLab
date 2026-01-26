@@ -1,4 +1,4 @@
-"""pytest configuration for QuantLab backend tests."""
+"""pytest configuration for OptionLab backend tests."""
 import pytest
 
 
