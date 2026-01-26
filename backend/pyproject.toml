@@ -11,6 +11,7 @@ dependencies = [
     "fastapi>=0.109.0",
     "uvicorn[standard]>=0.27.0",
     "py_vollib>=1.0.1",
+    "QuantLib>=1.32",
     "yfinance>=0.2.35",
     "sqlalchemy>=2.0.25",
     "pydantic>=2.5.3",
