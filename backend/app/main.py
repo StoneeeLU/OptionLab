@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import health, options, analysis, watchlist, export
 from app.core.error_handlers import setup_exception_handlers
+from app.core.performance import add_performance_middleware
 import logging
 
 # Configure logging
@@ -28,6 +29,9 @@ app.add_middleware(
 
 # Setup error handlers
 setup_exception_handlers(app)
+
+# Add performance middleware (GZip, timing, cache headers)
+add_performance_middleware(app)
 
 # Include routers
 app.include_router(health.router)
