@@ -1,0 +1,68 @@
+.volatility-surface-chart {
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.chart-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.chart-header h3 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  font-size: 1.75em;
+  font-weight: 700;
+}
+
+.chart-subtitle {
+  margin: 0;
+  color: #666;
+  font-size: 0.95em;
+}
+
+.chart-container {
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+
+.chart-controls {
+  margin-top: 16px;
+  text-align: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  color: #555;
+  font-size: 0.9em;
+}
+
+.loading,
+.empty-state {
+  padding: 60px 40px;
+  text-align: center;
+  color: #9e9e9e;
+  font-size: 1.15em;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .volatility-surface-chart {
+    padding: 16px;
+  }
+
+  .chart-header h3 {
+    font-size: 1.35em;
+  }
+
+  .chart-container {
+    height: 400px !important;
+  }
+}
