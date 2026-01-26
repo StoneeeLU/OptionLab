@@ -1,0 +1,132 @@
+.combination-analysis-panel {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.strategy-info {
+  margin-bottom: 20px;
+}
+
+.strategy-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.5em;
+}
+
+.premium-info {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.premium-info .label {
+  font-weight: 600;
+  color: #666;
+}
+
+.premium-info .value {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.premium-info .debit {
+  color: #d32f2f;
+}
+
+.premium-info .credit {
+  color: #388e3c;
+}
+
+.greeks-table {
+  margin: 20px 0;
+}
+
+.greeks-table h4 {
+  margin: 0 0 10px 0;
+  color: #555;
+}
+
+.greeks-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.greeks-table th,
+.greeks-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.greeks-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #555;
+}
+
+.greeks-table td.positive {
+  color: #388e3c;
+}
+
+.greeks-table td.negative {
+  color: #d32f2f;
+}
+
+.pnl-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 6px;
+}
+
+.metric .label {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: 500;
+}
+
+.metric .value {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.metric .value.profit {
+  color: #388e3c;
+}
+
+.metric .value.loss {
+  color: #d32f2f;
+}
+
+.pnl-chart {
+  margin-top: 20px;
+}
+
+.loading,
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-size: 1.1em;
+}
+
+@media (max-width: 768px) {
+  .greeks-table table {
+    font-size: 0.9em;
+  }
+  
+  .pnl-metrics {
+    grid-template-columns: 1fr;
+  }
+}
