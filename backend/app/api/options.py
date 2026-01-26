@@ -4,6 +4,7 @@ from typing import Optional, List
 from app.services.providers.base import DataProvider
 from app.services.cache.cached_provider import CachedDataProvider
 from app.services.providers.yfinance_provider import YFinanceProvider
+from app.services.history_service import OptionHistoryService
 from app.models.chain import OptionChain
 from app.models.option import Option
 
@@ -105,6 +106,65 @@ async def get_option_chain(
             status_code=500,
             detail=f"Error fetching option chain: {str(e)}"
         )
+
+
+@router.get("/{symbol}/history")
+async def get_option_history(
+    symbol: str,
+    strike: float = Query(..., description="Strike price"),
+    expiry: str = Query(..., description="Expiration date (YYYY-MM-DD)"),
+    option_type: str = Query(..., description="'call' or 'put'"),
+    days: int = Query(30, description="Number of days of history", ge=1, le=365)
+):
+    """
+    Get historical data for a specific option.
+    
+    Note: This endpoint returns underlying stock data and calculated HV.
+    Historical option prices and IV require premium data provider.
+    
+    Args:
+        symbol: Stock symbol
+        strike: Strike price
+        expiry: Expiration date
+        option_type: 'call' or 'put'
+        days: Number of days of history (1-365)
+    
+    Returns:
+        Historical data including stock prices and calculated HV
+    """
+    try:
+        history = OptionHistoryService.get_option_history(
+            symbol, strike, expiry, option_type, days
+        )
+        return history
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching history: {str(e)}")
+
+
+@router.get("/{symbol}/underlying-history")
+async def get_underlying_history(
+    symbol: str,
+    days: int = Query(30, description="Number of days of history", ge=1, le=365)
+):
+    """
+    Get historical price and volatility data for underlying stock.
+    
+    Args:
+        symbol: Stock symbol
+        days: Number of days of history (1-365)
+    
+    Returns:
+        Historical prices, volumes, and calculated HV
+    """
+    try:
+        history = OptionHistoryService.get_underlying_history(symbol, days)
+        return history
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching history: {str(e)}")
 
 
 def _check_moneyness(option: Option, spot: float, moneyness: str) -> bool:
