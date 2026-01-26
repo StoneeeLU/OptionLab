@@ -64,15 +64,20 @@ def test_analysis_single_stub():
 
 
 def test_analysis_combination_stub():
-    """Test combination analysis stub endpoint."""
+    """Test combination analysis endpoint."""
     from app.main import app
     
     client = TestClient(app)
     response = client.post("/api/analysis/combination", json={
-        "legs": []
+        "legs": [],
+        "spot_price": 150.0,
+        "risk_free_rate": 0.05,
+        "volatility": 0.25
     })
     
     assert response.status_code == 200
+    # Now returns full analysis, not stub
+    assert "strategy_name" in response.json()
 
 
 def test_watchlist_get_stub():
