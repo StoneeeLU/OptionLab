@@ -1,5 +1,6 @@
 """QuantLab FastAPI Main Application."""
 from fastapi import FastAPI
+from app.api import health, options, analysis, watchlist
 
 app = FastAPI(
     title="QuantLab API",
@@ -7,8 +8,8 @@ app = FastAPI(
     version="0.1.0",
 )
 
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "ok"}
+# Include routers
+app.include_router(health.router)
+app.include_router(options.router)
+app.include_router(analysis.router)
+app.include_router(watchlist.router)
