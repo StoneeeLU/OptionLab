@@ -76,3 +76,6 @@ Thumbs.db
 tmp/
 temp/
 nul
+
+# Internal workflow files (should not be in git)
+.sisyphus/
