@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
-from datetime import date
+from datetime import date, datetime
 from app.models.option import Option
 from app.models.analysis import OptionAnalysis
 from app.services.analysis.option_analyzer import OptionAnalyzer
@@ -18,7 +18,6 @@ class SingleOptionAnalysisRequest(BaseModel):
     
     # Option details
     symbol: str = Field(..., description="Option symbol")
-    underlying_symbol: str = Field(..., description="Underlying symbol")
     strike: float = Field(..., gt=0, description="Strike price")
     expiry: date = Field(..., description="Expiration date")
     option_type: Literal["call", "put"] = Field(..., description="Call or Put")
@@ -47,6 +46,24 @@ class SingleOptionAnalysisRequest(BaseModel):
     )
 
 
+class VolatilitySurfaceRequest(BaseModel):
+    """Request for volatility surface data."""
+    
+    options: List[dict] = Field(..., description="List of options for surface")
+    spot_price: float = Field(..., gt=0, description="Current underlying price")
+    min_strike: Optional[float] = Field(None, description="Minimum strike to include")
+    max_strike: Optional[float] = Field(None, description="Maximum strike to include")
+
+
+class VolatilitySurfaceResponse(BaseModel):
+    """Response containing volatility surface data."""
+    
+    surface_data: List[List[float]] = Field(..., description="3D data points [strike, days, iv]")
+    strikes: List[float] = Field(..., description="Unique strike prices")
+    expiries: List[str] = Field(..., description="Unique expiration dates")
+    days_to_expiry: List[int] = Field(..., description="Days to expiry for each expiration")
+
+
 class CombinationRequest(BaseModel):
     """Request for combination analysis."""
     legs: List[dict]
@@ -72,7 +89,6 @@ async def analyze_single_option(request: SingleOptionAnalysisRequest):
         # Create Option model from request
         option = Option(
             symbol=request.symbol,
-            underlying_symbol=request.underlying_symbol,
             strike=request.strike,
             expiry=request.expiry,
             option_type=request.option_type,
@@ -109,6 +125,80 @@ async def analyze_single_option(request: SingleOptionAnalysisRequest):
         )
 
 
+@router.post("/volatility-surface", response_model=VolatilitySurfaceResponse)
+async def get_volatility_surface(request: VolatilitySurfaceRequest):
+    """
+    Get volatility surface data for 3D visualization.
+    
+    Returns grid data of IV across strikes and expirations.
+    Suitable for ECharts 3D surface chart.
+    
+    Args:
+        request: Surface request with options list and filters
+        
+    Returns:
+        VolatilitySurfaceResponse: 3D surface data
+    """
+    try:
+        surface_data = []
+        strikes_set = set()
+        expiries_dict = {}  # expiry_str -> days_to_expiry
+        
+        now = datetime.now().date()
+        
+        for opt_dict in request.options:
+            # Skip if missing IV
+            if opt_dict.get("implied_volatility") is None:
+                continue
+            
+            strike = opt_dict["strike"]
+            expiry_str = opt_dict["expiry"]
+            iv = opt_dict["implied_volatility"]
+            
+            # Apply strike filter if provided
+            if request.min_strike is not None and strike < request.min_strike:
+                continue
+            if request.max_strike is not None and strike > request.max_strike:
+                continue
+            
+            # Calculate days to expiry
+            if isinstance(expiry_str, str):
+                expiry_date = datetime.fromisoformat(expiry_str).date()
+            else:
+                expiry_date = expiry_str
+            
+            days_to_expiry = (expiry_date - now).days
+            
+            # Add data point: [strike, days, iv]
+            surface_data.append([strike, days_to_expiry, iv])
+            
+            # Track unique strikes and expiries
+            strikes_set.add(strike)
+            if expiry_str not in expiries_dict:
+                expiries_dict[expiry_str] = days_to_expiry
+        
+        # Sort strikes
+        strikes = sorted(list(strikes_set))
+        
+        # Sort expiries by date
+        expiries_sorted = sorted(expiries_dict.items(), key=lambda x: x[1])
+        expiries = [e[0] for e in expiries_sorted]
+        days_to_expiry_list = [e[1] for e in expiries_sorted]
+        
+        return VolatilitySurfaceResponse(
+            surface_data=surface_data,
+            strikes=strikes,
+            expiries=expiries,
+            days_to_expiry=days_to_expiry_list
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Surface calculation failed: {str(e)}"
+        )
+
+
 @router.post("/combination")
 async def analyze_combination(request: CombinationRequest):
     """
@@ -120,4 +210,5 @@ async def analyze_combination(request: CombinationRequest):
         "message": "Combination analysis stub",
         "legs_count": len(request.legs)
     }
+
 

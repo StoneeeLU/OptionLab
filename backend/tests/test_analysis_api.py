@@ -17,7 +17,7 @@ class TestSingleOptionAnalysisEndpoint:
         
         request_data = {
             "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
+            
             "strike": 150.0,
             "expiry": expiry,
             "option_type": "call",
@@ -63,7 +63,7 @@ class TestSingleOptionAnalysisEndpoint:
         
         request_data = {
             "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
+            
             "strike": 150.0,
             "expiry": expiry,
             "option_type": "call",
@@ -94,7 +94,7 @@ class TestSingleOptionAnalysisEndpoint:
         
         request_data = {
             "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
+            
             "strike": 150.0,
             "expiry": expiry,
             "option_type": "put",
@@ -123,7 +123,7 @@ class TestSingleOptionAnalysisEndpoint:
         
         request_data = {
             "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
+            
             "strike": 150.0,
             "expiry": expiry,
             "option_type": "call",
@@ -164,7 +164,7 @@ class TestSingleOptionAnalysisEndpoint:
         
         request_data = {
             "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
+            
             "strike": 150.0,
             "expiry": expiry,
             "option_type": "invalid",  # Invalid type
@@ -189,7 +189,7 @@ class TestSingleOptionAnalysisEndpoint:
         
         request_data = {
             "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
+            
             "strike": 150.0,
             "expiry": expiry,
             "option_type": "call",
