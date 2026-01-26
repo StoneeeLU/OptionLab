@@ -1,0 +1,200 @@
+/**
+ * OptionAnalysisCard styles
+ */
+
+.option-analysis-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.card-header .expiry {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.valuation-badge {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.valuation-badge.cheap {
+  background-color: #4caf50;
+  color: white;
+}
+
+.valuation-badge.fair {
+  background-color: #ff9800;
+  color: white;
+}
+
+.valuation-badge.expensive {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Pricing Section */
+.pricing-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.price-item .label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.price-item .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Volatility Section */
+.volatility-section {
+  margin-bottom: 20px;
+}
+
+.volatility-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.vol-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.vol-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vol-item .label {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+.vol-item .value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+/* IV Percentile Bar */
+.percentile-bar {
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.percentile-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #ff9800, #f44336);
+  transition: width 0.3s ease;
+}
+
+/* Greeks Section */
+.greeks-section {
+  margin-bottom: 0;
+}
+
+.greeks-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.greeks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.greek-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.greek-item .label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.greek-value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.greek-value.positive {
+  color: #4caf50;
+}
+
+.greek-value.negative {
+  color: #f44336;
+}
+
+.greek-value.neutral {
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .pricing-section {
+    grid-template-columns: 1fr;
+  }
+
+  .vol-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .greeks-grid {
+    grid-template-columns: 1fr;
+  }
+}
