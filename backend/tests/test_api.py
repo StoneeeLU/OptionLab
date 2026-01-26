@@ -33,20 +33,34 @@ def test_options_chain_stub():
 
 
 def test_analysis_single_stub():
-    """Test single option analysis stub endpoint."""
+    """Test single option analysis endpoint."""
     from app.main import app
+    from datetime import datetime, timedelta
     
     client = TestClient(app)
+    expiry = (datetime.now() + timedelta(days=365)).date().isoformat()
+    
     response = client.post("/api/analysis/single", json={
         "symbol": "AAPL",
+        "underlying_symbol": "AAPL",
         "strike": 150.0,
-        "expiry": "2024-12-20",
-        "option_type": "call"
+        "expiry": expiry,
+        "option_type": "call",
+        "exercise_style": "european",
+        "bid": 8.0,
+        "ask": 8.5,
+        "last": 8.25,
+        "volume": 1000,
+        "open_interest": 5000,
+        "implied_volatility": 0.25,
+        "spot_price": 150.0,
+        "risk_free_rate": 0.05
     })
     
     assert response.status_code == 200
     data = response.json()
-    assert "message" in data
+    assert "theoretical_price" in data
+    assert "greeks" in data
 
 
 def test_analysis_combination_stub():
