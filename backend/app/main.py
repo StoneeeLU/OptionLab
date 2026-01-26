@@ -1,7 +1,7 @@
 """QuantLab FastAPI Main Application."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import health, options, analysis, watchlist
+from app.api import health, options, analysis, watchlist, export
 from app.core.error_handlers import setup_exception_handlers
 import logging
 
@@ -34,3 +34,4 @@ app.include_router(health.router)
 app.include_router(options.router)
 app.include_router(analysis.router)
 app.include_router(watchlist.router)
+app.include_router(export.router)
