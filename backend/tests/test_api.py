@@ -2,10 +2,76 @@
 import sys
 from pathlib import Path
 
+import pytest
+from datetime import date
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
 from fastapi.testclient import TestClient
+from app.api.options import get_data_provider
+from app.models.chain import OptionChain
+from app.models.option import Option
+from app.models.watchlist import Base
+from app.services.watchlist_service import get_db
+
+
+@pytest.fixture
+def client_with_overrides():
+    from app.main import app
+
+    test_engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
+
+    def override_get_db():
+        db = TestSessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    class StubProvider:
+        def __init__(self, chain: OptionChain):
+            self._chain = chain
+
+        def get_option_chain(self, symbol: str):
+            return self._chain
+
+    stub_chain = OptionChain(
+        underlying="AAPL",
+        spot_price=150.0,
+        options=[
+            Option(
+                symbol="AAPL",
+                strike=150.0,
+                expiry=date(2026, 12, 20),
+                option_type="call",
+                bid=5.0,
+                ask=5.5,
+                last=5.2,
+                volume=100,
+                open_interest=500,
+                implied_volatility=0.25,
+            )
+        ],
+        expiration_dates=[date(2026, 12, 20)],
+    )
+
+    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_data_provider] = lambda: StubProvider(stub_chain)
+
+    try:
+        yield TestClient(app)
+    finally:
+        app.dependency_overrides.clear()
 
 
 def test_health_router():
@@ -19,12 +85,9 @@ def test_health_router():
     assert response.json() == {"status": "ok"}
 
 
-def test_options_chain_stub():
+def test_options_chain_stub(client_with_overrides):
     """Test options chain endpoint returns stub data."""
-    from app.main import app
-    
-    client = TestClient(app)
-    response = client.get("/api/options/AAPL/chain")
+    response = client_with_overrides.get("/api/options/AAPL/chain")
     
     assert response.status_code == 200
     data = response.json()
@@ -80,28 +143,26 @@ def test_analysis_combination_stub():
     assert "strategy_name" in response.json()
 
 
-def test_watchlist_get_stub():
+def test_watchlist_get_stub(client_with_overrides):
     """Test watchlist GET endpoint stub."""
-    from app.main import app
-    
-    client = TestClient(app)
-    response = client.get("/api/watchlist")
+    response = client_with_overrides.get("/api/watchlist")
     
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
 
 
-def test_watchlist_post_stub():
+def test_watchlist_post_stub(client_with_overrides):
     """Test watchlist POST endpoint stub."""
-    from app.main import app
+    response = client_with_overrides.post(
+        "/api/watchlist",
+        json={
+            "symbol": "AAPL",
+            "item_type": "stock",
+        },
+    )
     
-    client = TestClient(app)
-    response = client.post("/api/watchlist", json={
-        "symbol": "AAPL"
-    })
-    
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 def test_openapi_docs_available():

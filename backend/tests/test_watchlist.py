@@ -4,13 +4,18 @@ import os
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from app.main import app
 from app.models.watchlist import Base, WatchlistItem
 from app.services.watchlist_service import get_db
 
 # Use in-memory database for tests
 TEST_DATABASE_URL = "sqlite:///:memory:"
-test_engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+test_engine = create_engine(
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 
@@ -80,7 +85,7 @@ def test_create_option_missing_fields():
         "notes": "Missing fields"
     })
     assert response.status_code == 400
-    assert "must have strike" in response.json()["detail"]
+    assert "must have strike" in response.json()["error"]["message"]
 
 
 def test_create_option_invalid_type():

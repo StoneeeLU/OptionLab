@@ -58,7 +58,8 @@ class ExportService:
         
         # Volatility
         writer.writerow(['Volatility Analysis'])
-        writer.writerow(['Implied Volatility', f'{analysis_data.implied_volatility:.2%}'])
+        iv = analysis_data.option.implied_volatility
+        writer.writerow(['Implied Volatility', '' if iv is None else f'{iv:.2%}'])
         writer.writerow(['Historical Volatility', f'{analysis_data.historical_volatility:.2%}'])
         writer.writerow(['IV Percentile', f'{analysis_data.iv_percentile:.2f}'])
         

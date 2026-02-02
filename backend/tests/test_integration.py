@@ -5,19 +5,101 @@ Tests the complete application flow from API endpoints through analysis
 to ensure all components work together correctly.
 """
 import pytest
+from datetime import date
+from unittest.mock import patch
 from fastapi.testclient import TestClient
-from app.main import app
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-client = TestClient(app)
+from app.api.options import get_data_provider
+from app.models.chain import OptionChain
+from app.models.option import Option
+from app.models.watchlist import Base
+from app.services.watchlist_service import get_db
+
+
+@pytest.fixture
+def client_with_overrides():
+    from app.main import app
+
+    test_engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
+
+    def override_get_db():
+        db = TestSessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    expiry = date(2026, 12, 20)
+    stub_chain = OptionChain(
+        underlying="AAPL",
+        spot_price=150.0,
+        options=[
+            Option(
+                symbol="AAPL",
+                strike=150.0,
+                expiry=expiry,
+                option_type="call",
+                bid=5.0,
+                ask=5.5,
+                last=5.2,
+                volume=1000,
+                open_interest=5000,
+                implied_volatility=0.25,
+                exercise_style="american",
+            ),
+            Option(
+                symbol="AAPL",
+                strike=150.0,
+                expiry=expiry,
+                option_type="put",
+                bid=4.5,
+                ask=4.9,
+                last=4.7,
+                volume=800,
+                open_interest=4000,
+                implied_volatility=0.26,
+                exercise_style="american",
+            ),
+        ],
+        expiration_dates=[expiry],
+    )
+
+    class StubProvider:
+        def get_option_chain(self, symbol: str):
+            if symbol.upper() == "AAPL":
+                return stub_chain
+
+            return OptionChain(
+                underlying=symbol.upper(),
+                spot_price=150.0,
+                options=[],
+                expiration_dates=[],
+            )
+
+    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_data_provider] = lambda: StubProvider()
+    try:
+        yield TestClient(app)
+    finally:
+        app.dependency_overrides.clear()
 
 
 class TestFullAnalysisWorkflow:
     """Test complete analysis workflow: fetch chain → analyze → export."""
     
-    def test_end_to_end_single_option_analysis(self):
+    def test_end_to_end_single_option_analysis(self, client_with_overrides):
         """Test fetching option chain and analyzing a single option."""
         # Step 1: Fetch options chain
-        response = client.get("/api/options/AAPL/chain")
+        response = client_with_overrides.get("/api/options/AAPL/chain")
         assert response.status_code == 200
         data = response.json()
         assert "options" in data
@@ -31,13 +113,23 @@ class TestFullAnalysisWorkflow:
         assert call_option is not None
         
         # Step 3: Analyze the option
-        analysis_response = client.post(
+        analysis_response = client_with_overrides.post(
             "/api/analysis/single",
             json={
-                "option": call_option,
-                "spot_price": data.get("spot_price", 150.0),
-                "risk_free_rate": 0.05
-            }
+                "symbol": call_option["symbol"],
+                "strike": call_option["strike"],
+                "expiry": call_option["expiry"],
+                "option_type": call_option["option_type"],
+                "exercise_style": call_option.get("exercise_style", "american"),
+                "bid": call_option.get("bid"),
+                "ask": call_option.get("ask"),
+                "last": call_option.get("last"),
+                "volume": call_option.get("volume"),
+                "open_interest": call_option.get("open_interest"),
+                "implied_volatility": call_option.get("implied_volatility"),
+                "spot_price": data["spot_price"],
+                "risk_free_rate": 0.05,
+            },
         )
         assert analysis_response.status_code == 200
         analysis = analysis_response.json()
@@ -45,47 +137,59 @@ class TestFullAnalysisWorkflow:
         # Verify analysis contains required fields
         assert "greeks" in analysis
         assert "theoretical_price" in analysis
-        assert "implied_volatility" in analysis
+        assert "market_price" in analysis
         assert "historical_volatility" in analysis
         assert "iv_percentile" in analysis
         assert "mispricing" in analysis
         
-    def test_export_single_analysis_csv(self):
+    def test_export_single_analysis_csv(self, client_with_overrides):
         """Test exporting single option analysis to CSV."""
-        # Create mock analysis data
-        export_data = {
-            "symbol": "AAPL",
-            "strike": 150.0,
-            "expiry": "2024-12-20",
-            "option_type": "call",
-            "market_price": 10.5,
-            "theoretical_price": 10.2,
-            "greeks": {
-                "delta": 0.55,
-                "gamma": 0.03,
-                "theta": -0.05,
-                "vega": 0.15,
-                "rho": 0.08
+        chain_response = client_with_overrides.get("/api/options/AAPL/chain")
+        assert chain_response.status_code == 200
+        chain = chain_response.json()
+
+        call_option = next(
+            (opt for opt in chain["options"] if opt["option_type"] == "call"),
+            None,
+        )
+        assert call_option is not None
+
+        analysis_response = client_with_overrides.post(
+            "/api/analysis/single",
+            json={
+                "symbol": call_option["symbol"],
+                "strike": call_option["strike"],
+                "expiry": call_option["expiry"],
+                "option_type": call_option["option_type"],
+                "exercise_style": call_option.get("exercise_style", "american"),
+                "bid": call_option.get("bid"),
+                "ask": call_option.get("ask"),
+                "last": call_option.get("last"),
+                "volume": call_option.get("volume"),
+                "open_interest": call_option.get("open_interest"),
+                "implied_volatility": call_option.get("implied_volatility"),
+                "spot_price": chain["spot_price"],
+                "risk_free_rate": 0.05,
             },
-            "iv": 0.25,
-            "hv": 0.22
-        }
-        
-        response = client.post("/api/export/csv/analysis", json=export_data)
-        assert response.status_code == 200
-        assert response.headers["content-type"] == "text/csv; charset=utf-8"
-        
-        # Verify CSV content
-        csv_content = response.text
-        assert "OptionLab" in csv_content
+        )
+        assert analysis_response.status_code == 200
+
+        export_response = client_with_overrides.post(
+            "/api/export/csv/analysis",
+            json=analysis_response.json(),
+        )
+        assert export_response.status_code == 200
+        assert export_response.headers["content-type"].startswith("text/csv")
+
+        csv_content = export_response.text
+        assert "OptionLab Options Analysis Export" in csv_content
         assert "AAPL" in csv_content
-        assert "150" in csv_content
 
 
 class TestStrategyWorkflow:
     """Test strategy workflow: select options → recognize → P&L."""
     
-    def test_multi_leg_strategy_recognition_and_pnl(self):
+    def test_multi_leg_strategy_recognition_and_pnl(self, client_with_overrides):
         """Test recognizing strategy and calculating P&L."""
         # Create a vertical call spread
         legs = [
@@ -93,7 +197,7 @@ class TestStrategyWorkflow:
                 "option": {
                     "symbol": "AAPL",
                     "strike": 150.0,
-                    "expiry": "2024-12-20",
+                    "expiry": "2026-12-20",
                     "option_type": "call",
                     "bid": 10.0,
                     "ask": 10.5,
@@ -110,7 +214,7 @@ class TestStrategyWorkflow:
                 "option": {
                     "symbol": "AAPL",
                     "strike": 155.0,
-                    "expiry": "2024-12-20",
+                    "expiry": "2026-12-20",
                     "option_type": "call",
                     "bid": 7.0,
                     "ask": 7.5,
@@ -126,12 +230,13 @@ class TestStrategyWorkflow:
         ]
         
         # Analyze combination
-        response = client.post(
+        response = client_with_overrides.post(
             "/api/analysis/combination",
             json={
                 "legs": legs,
                 "spot_price": 150.0,
-                "risk_free_rate": 0.05
+                "risk_free_rate": 0.05,
+                "volatility": 0.25,
             }
         )
         
@@ -157,65 +262,88 @@ class TestStrategyWorkflow:
         assert "max_profit" in result
         assert "max_loss" in result
     
-    def test_export_strategy_csv(self):
+    def test_export_strategy_csv(self, client_with_overrides):
         """Test exporting strategy analysis to CSV."""
-        strategy_data = {
-            "strategy_name": "Vertical Call Spread",
-            "legs": [
-                {
+        legs = [
+            {
+                "option": {
                     "symbol": "AAPL",
                     "strike": 150.0,
-                    "expiry": "2024-12-20",
+                    "expiry": "2026-12-20",
                     "option_type": "call",
-                    "action": "buy",
-                    "quantity": 1
+                    "bid": 10.0,
+                    "ask": 10.5,
+                    "exercise_style": "american",
                 },
-                {
+                "quantity": 1,
+            },
+            {
+                "option": {
                     "symbol": "AAPL",
                     "strike": 155.0,
-                    "expiry": "2024-12-20",
+                    "expiry": "2026-12-20",
                     "option_type": "call",
-                    "action": "sell",
-                    "quantity": 1
-                }
-            ],
-            "net_premium": -3.5,
-            "max_profit": 1.5,
-            "max_loss": -3.5,
-            "breakevens": [153.5]
+                    "bid": 7.0,
+                    "ask": 7.5,
+                    "exercise_style": "american",
+                },
+                "quantity": -1,
+            },
+        ]
+
+        analysis_response = client_with_overrides.post(
+            "/api/analysis/combination",
+            json={
+                "legs": legs,
+                "spot_price": 150.0,
+                "risk_free_rate": 0.05,
+                "volatility": 0.25,
+            },
+        )
+        assert analysis_response.status_code == 200
+        analysis = analysis_response.json()
+
+        strategy_data = {
+            "strategy_name": analysis["strategy_name"],
+            "legs": legs,
+            "combined_greeks": analysis["combined_greeks"],
+            "net_premium": analysis["net_premium"],
+            "max_profit": analysis["max_profit"],
+            "max_loss": analysis["max_loss"],
+            "breakevens": analysis["breakevens"],
         }
-        
-        response = client.post("/api/export/csv/strategy", json=strategy_data)
-        assert response.status_code == 200
-        assert response.headers["content-type"] == "text/csv; charset=utf-8"
-        
-        csv_content = response.text
-        assert "OptionLab" in csv_content
-        assert "Vertical Call Spread" in csv_content
+
+        export_response = client_with_overrides.post("/api/export/csv/strategy", json=strategy_data)
+        assert export_response.status_code == 200
+        assert export_response.headers["content-type"].startswith("text/csv")
+
+        csv_content = export_response.text
+        assert "OptionLab Strategy Analysis Export" in csv_content
+        assert analysis["strategy_name"] in csv_content
 
 
 class TestErrorHandling:
     """Test error handling across all endpoints."""
     
-    def test_invalid_symbol_returns_404(self):
+    def test_invalid_symbol_returns_404(self, client_with_overrides):
         """Test that invalid symbol returns 404."""
-        response = client.get("/api/options/INVALID_SYMBOL_XYZ/chain")
-        # Should either return 404 or 200 with empty options
-        assert response.status_code in [200, 404]
+        response = client_with_overrides.get("/api/options/INVALID_SYMBOL_XYZ/chain")
+        assert response.status_code == 404
         
-    def test_malformed_analysis_request_returns_422(self):
+    def test_malformed_analysis_request_returns_422(self, client_with_overrides):
         """Test that malformed request returns validation error."""
-        response = client.post(
+        response = client_with_overrides.post(
             "/api/analysis/single",
             json={"invalid": "data"}
         )
         assert response.status_code == 422
         error = response.json()
-        assert "detail" in error
+        assert "error" in error
+        assert error["error"]["code"] == 422
     
-    def test_volatility_surface_for_invalid_symbol(self):
+    def test_volatility_surface_for_invalid_symbol(self, client_with_overrides):
         """Test volatility surface with invalid symbol."""
-        response = client.get("/api/analysis/volatility-surface/INVALID123")
+        response = client_with_overrides.get("/api/analysis/volatility-surface/INVALID123")
         # Should handle gracefully
         assert response.status_code in [200, 404, 500]
 
@@ -223,17 +351,17 @@ class TestErrorHandling:
 class TestCachingBehavior:
     """Test that caching is working properly."""
     
-    def test_options_chain_returns_cache_headers(self):
+    def test_options_chain_returns_cache_headers(self, client_with_overrides):
         """Test that options chain response includes cache headers."""
-        response = client.get("/api/options/AAPL/chain")
+        response = client_with_overrides.get("/api/options/AAPL/chain")
         assert response.status_code == 200
         
         # Check for cache control header
         assert "cache-control" in response.headers or "Cache-Control" in response.headers
     
-    def test_timing_header_present(self):
+    def test_timing_header_present(self, client_with_overrides):
         """Test that timing header is added to responses."""
-        response = client.get("/health")
+        response = client_with_overrides.get("/health")
         assert response.status_code == 200
         
         # Check for timing header (may be case-sensitive)
@@ -244,32 +372,64 @@ class TestCachingBehavior:
 class TestHistoryEndpoints:
     """Test option history endpoints."""
     
-    def test_underlying_history(self):
+    def test_underlying_history(self, client_with_overrides):
         """Test fetching underlying stock history."""
-        response = client.get("/api/options/AAPL/underlying-history?days=30")
+        with patch(
+            "app.services.history_service.OptionHistoryService.get_underlying_history",
+            return_value={
+                "symbol": "AAPL",
+                "days": 30,
+                "history": {
+                    "dates": ["2026-01-01"],
+                    "prices": [150.0],
+                    "volumes": [1000000],
+                    "historical_volatility": [0.2],
+                },
+            },
+        ):
+            response = client_with_overrides.get("/api/options/AAPL/underlying-history?days=30")
         assert response.status_code == 200
         data = response.json()
         
-        assert "dates" in data
-        assert "prices" in data
-        assert "volumes" in data
-        assert "historical_volatility" in data
+        assert "history" in data
+        assert "dates" in data["history"]
+        assert "prices" in data["history"]
+        assert "volumes" in data["history"]
+        assert "historical_volatility" in data["history"]
     
-    def test_option_history(self):
+    def test_option_history(self, client_with_overrides):
         """Test fetching option history."""
-        response = client.get(
-            "/api/options/AAPL/history",
-            params={
+        with patch(
+            "app.services.history_service.OptionHistoryService.get_option_history",
+            return_value={
+                "symbol": "AAPL",
                 "strike": 150.0,
-                "expiry": "2024-12-20",
+                "expiry": "2026-12-20",
                 "option_type": "call",
-                "days": 30
-            }
-        )
+                "days": 30,
+                "history": {
+                    "dates": ["2026-01-01"],
+                    "stock_prices": [150.0],
+                    "historical_volatility": [0.2],
+                    "option_prices": [None],
+                    "implied_volatility": [None],
+                },
+            },
+        ):
+            response = client_with_overrides.get(
+                "/api/options/AAPL/history",
+                params={
+                    "strike": 150.0,
+                    "expiry": "2026-12-20",
+                    "option_type": "call",
+                    "days": 30,
+                },
+            )
         assert response.status_code == 200
         data = response.json()
         
-        assert "dates" in data
+        assert "history" in data
+        assert "dates" in data["history"]
         # Note: Option-specific history may require premium data
         # This endpoint returns placeholder data with yfinance
 
@@ -277,34 +437,34 @@ class TestHistoryEndpoints:
 class TestWatchlistIntegration:
     """Test watchlist CRUD operations."""
     
-    def test_watchlist_crud_workflow(self):
+    def test_watchlist_crud_workflow(self, client_with_overrides):
         """Test complete watchlist workflow: add → get → delete."""
         # Add item to watchlist
-        add_response = client.post(
+        add_response = client_with_overrides.post(
             "/api/watchlist",
             json={
                 "symbol": "AAPL",
                 "item_type": "stock"
             }
         )
-        assert add_response.status_code == 200
+        assert add_response.status_code == 201
         item = add_response.json()
         assert "id" in item
         item_id = item["id"]
         
         # Get watchlist
-        get_response = client.get("/api/watchlist")
+        get_response = client_with_overrides.get("/api/watchlist")
         assert get_response.status_code == 200
         watchlist = get_response.json()
         assert isinstance(watchlist, list)
         assert any(w["id"] == item_id for w in watchlist)
         
         # Delete item
-        delete_response = client.delete(f"/api/watchlist/{item_id}")
+        delete_response = client_with_overrides.delete(f"/api/watchlist/{item_id}")
         assert delete_response.status_code == 200
         
         # Verify deletion
-        get_after_delete = client.get("/api/watchlist")
+        get_after_delete = client_with_overrides.get("/api/watchlist")
         assert get_after_delete.status_code == 200
         watchlist_after = get_after_delete.json()
         assert not any(w["id"] == item_id for w in watchlist_after)

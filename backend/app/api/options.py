@@ -1,4 +1,5 @@
 """Options data router - Full implementation."""
+from datetime import date
 from fastapi import APIRouter, Query, HTTPException, Depends
 from typing import Optional, List
 from app.services.providers.base import DataProvider
@@ -55,11 +56,19 @@ async def get_option_chain(
         
         # Apply filters
         filtered_options = chain.options
-        
+
         # Filter by expiry
         if expiry:
-            filtered_options = [opt for opt in filtered_options if opt.expiry == expiry]
-        
+            try:
+                expiry_date = date.fromisoformat(expiry)
+            except ValueError:
+                raise HTTPException(
+                    status_code=400,
+                    detail="expiry must be in YYYY-MM-DD format",
+                )
+
+            filtered_options = [opt for opt in filtered_options if opt.expiry == expiry_date]
+
         # Filter by moneyness
         if moneyness:
             moneyness = moneyness.lower()
