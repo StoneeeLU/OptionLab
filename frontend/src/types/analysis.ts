@@ -2,8 +2,8 @@
  * Analysis types - option analysis results.
  * Matches backend/app/models/analysis.py
  */
-import { Option } from './option';
-import { Greeks } from './greeks';
+import type { Option } from './option';
+import type { Greeks } from './greeks';
 
 export interface OptionAnalysis {
   option: Option;

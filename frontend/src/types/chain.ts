@@ -2,7 +2,7 @@
  * Option chain types.
  * Matches backend/app/models/chain.py
  */
-import { Option } from './option';
+import type { Option } from './option';
 
 export interface OptionChain {
   underlying: string;

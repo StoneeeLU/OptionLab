@@ -105,9 +105,7 @@ describe('OptionsChainTable', () => {
   });
 
   it('should display calls on left, puts on right, strike in center', () => {
-    const { container } = render(
-      <OptionsChainTable options={mockOptions} spotPrice={150.0} />
-    );
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
 
     // Check table structure - should have CALLS, strike, PUTS section headers
     expect(screen.getByText('CALLS')).toBeInTheDocument();

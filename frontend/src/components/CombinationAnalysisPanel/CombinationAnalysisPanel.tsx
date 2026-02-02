@@ -50,10 +50,10 @@ export function CombinationAnalysisPanel({ analysis, loading = false }: Props) {
 
     // Find zero line intersections for breakeven markers
     const breakevenMarkers = analysis.breakevens.map((price) => ({
-      xAxis: price,
+      xAxis: price.toFixed(2),
       label: {
         formatter: `BE: ${price.toFixed(2)}`,
-        position: 'insideEndTop'
+        position: 'insideEndTop' as const,
       }
     }));
 
@@ -77,12 +77,12 @@ export function CombinationAnalysisPanel({ analysis, loading = false }: Props) {
       },
       xAxis: {
         type: 'category',
-        data: prices,
+        data: prices.map((p) => p.toFixed(2)),
         name: 'Underlying Price',
         nameLocation: 'middle',
         nameGap: 30,
         axisLabel: {
-          formatter: (value: number) => `$${value.toFixed(0)}`
+          formatter: (value: string) => `$${Number(value).toFixed(0)}`
         }
       },
       yAxis: {
@@ -135,9 +135,9 @@ export function CombinationAnalysisPanel({ analysis, loading = false }: Props) {
                 }
               },
               ...breakevenMarkers
-            ]
+            ] as any
           }
-        }
+        } as any
       ]
     };
 

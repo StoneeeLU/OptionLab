@@ -1,4 +1,3 @@
-import React from 'react';
 import type { OptionAnalysis } from '../../types';
 import './OptionAnalysisCard.css';
 

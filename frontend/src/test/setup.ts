@@ -1,4 +1,28 @@
 import '@testing-library/jest-dom'
 
+import { vi } from 'vitest'
+
+vi.mock('echarts', () => {
+  class LinearGradient {
+    constructor(..._args: unknown[]) {}
+  }
+
+  return {
+    init: vi.fn(() => ({
+      setOption: vi.fn(),
+      resize: vi.fn(),
+      dispose: vi.fn(),
+    })),
+    graphic: {
+      LinearGradient,
+    },
+  }
+})
+
+vi.mock('echarts-gl', () => ({}))
+
 // Mock SVG and image imports
-global.URL.createObjectURL = vi.fn(() => 'mock-url')
+if (!('createObjectURL' in URL)) {
+  // @ts-expect-error - jsdom doesn't implement createObjectURL
+  URL.createObjectURL = vi.fn(() => 'mock-url')
+}

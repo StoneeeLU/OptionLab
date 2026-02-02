@@ -57,7 +57,7 @@ describe('CombinationAnalysisPanel', () => {
 
     render(<CombinationAnalysisPanel analysis={analysis} />);
     expect(screen.getByText(/Credit:/i)).toBeInTheDocument();
-    expect(screen.getByText(/\$2.00/)).toBeInTheDocument();
+    expect(screen.getByText(/Credit:\s*\$2\.00/i)).toBeInTheDocument();
   });
 
   it('displays all Greeks', () => {

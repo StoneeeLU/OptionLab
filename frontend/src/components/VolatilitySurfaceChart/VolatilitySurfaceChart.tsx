@@ -119,7 +119,7 @@ export function VolatilitySurfaceChart({ data, loading = false }: Props) {
               borderColor: '#000'
             }
           }
-        }
+        } as any
       ]
     };
 

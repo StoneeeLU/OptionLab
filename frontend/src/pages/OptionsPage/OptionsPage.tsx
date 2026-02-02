@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { OptionsChainTable } from '../../components/OptionsChainTable';
 import { getOptionChain } from '../../services/api';
-import type { OptionChain, Option } from '../../types';
+import type { OptionChain } from '../../types';
 import './OptionsPage.css';
 
 export function OptionsPage() {
-  const [symbol, setSymbol] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [optionChain, setOptionChain] = useState<OptionChain | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,7 +17,6 @@ export function OptionsPage() {
   const handleSearch = async (searchSymbol: string) => {
     if (!searchSymbol.trim()) return;
 
-    setSymbol(searchSymbol.toUpperCase());
     setLoading(true);
     setError(null);
 
