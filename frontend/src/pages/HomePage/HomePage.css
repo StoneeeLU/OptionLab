@@ -1,0 +1,85 @@
+.home-page {
+  padding: 20px;
+}
+
+.home-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.home-title h1 {
+  font-size: 22px;
+  letter-spacing: 0.2px;
+}
+
+.home-title .subtitle {
+  margin-top: 6px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.popular-section .grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.symbol-card {
+  display: block;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-surface) 88%, var(--color-primary) 12%),
+    var(--color-surface)
+  );
+  box-shadow: var(--shadow-sm);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.symbol-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-border) 55%, var(--color-primary) 45%);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.symbol {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0.6px;
+}
+
+.pill {
+  font-size: 11px;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary-light) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.card-bottom {
+  margin-top: 10px;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 980px) {
+  .popular-section .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
