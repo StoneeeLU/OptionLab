@@ -1,7 +1,7 @@
 """OptionLab FastAPI Main Application."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import health, options, analysis, watchlist, export
+from app.api import health, options, analysis, watchlist, export, volatility
 from app.core.error_handlers import setup_exception_handlers
 from app.core.performance import add_performance_middleware
 import logging
@@ -37,5 +37,6 @@ add_performance_middleware(app)
 app.include_router(health.router)
 app.include_router(options.router)
 app.include_router(analysis.router)
+app.include_router(volatility.router)
 app.include_router(watchlist.router)
 app.include_router(export.router)
