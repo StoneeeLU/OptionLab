@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ComponentType } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ThemeToggle } from '../ThemeToggle'
 import './Sidebar.css'
@@ -6,7 +6,7 @@ import './Sidebar.css'
 type NavItem = {
   to: string
   label: string
-  icon: (props: { className?: string }) => JSX.Element
+  icon: ComponentType<{ className?: string }>
 }
 
 function HomeIcon({ className }: { className?: string }) {
