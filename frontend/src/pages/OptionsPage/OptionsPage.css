@@ -86,9 +86,7 @@
   align-items: center;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: var(--color-surface);
-  border-radius: 4px;
-  border: 1px solid var(--color-border);
+  /* GlassPanel handles background/border */
 }
 
 .chain-info h2 {
@@ -144,9 +142,7 @@
   gap: 20px;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: var(--color-surface);
-  border-radius: 4px;
-  border: 1px solid var(--color-border);
+  /* GlassPanel handles background/border */
   flex-wrap: wrap;
 }
 
@@ -198,10 +194,7 @@
 }
 
 .analysis-panel {
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  /* GlassPanel handles background/border */
   padding: 12px;
 }
 

@@ -3,10 +3,8 @@
  */
 
 .option-analysis-card {
-  background: white;
-  border-radius: 8px;
+  /* GlassPanel handles bg, radius, shadow */
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   max-width: 600px;
 }
 
@@ -17,19 +15,19 @@
   align-items: flex-start;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .card-header h3 {
   margin: 0;
   font-size: 20px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .card-header .expiry {
   margin: 5px 0 0 0;
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .valuation-badge {
@@ -62,7 +60,7 @@
   gap: 15px;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #f9f9f9;
+  background-color: var(--color-surface-hover);
   border-radius: 4px;
 }
 
@@ -74,14 +72,14 @@
 
 .price-item .label {
   font-size: 12px;
-  color: #666;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .price-item .value {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text);
 }
 
 /* Volatility Section */
@@ -92,7 +90,7 @@
 .volatility-section h4 {
   margin: 0 0 10px 0;
   font-size: 16px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .vol-grid {
@@ -110,20 +108,20 @@
 
 .vol-item .label {
   font-size: 11px;
-  color: #666;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .vol-item .value {
   font-size: 16px;
   font-weight: 600;
-  color: #1976d2;
+  color: var(--color-primary);
 }
 
 /* IV Percentile Bar */
 .percentile-bar {
   height: 8px;
-  background-color: #e0e0e0;
+  background-color: var(--color-border);
   border-radius: 4px;
   overflow: hidden;
   margin-top: 10px;
@@ -143,7 +141,7 @@
 .greeks-section h4 {
   margin: 0 0 10px 0;
   font-size: 16px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .greeks-grid {
@@ -157,13 +155,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px;
-  background-color: #f9f9f9;
+  background-color: var(--color-surface-hover);
   border-radius: 4px;
 }
 
 .greek-item .label {
   font-size: 13px;
-  color: #666;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -173,15 +171,15 @@
 }
 
 .greek-value.positive {
-  color: #4caf50;
+  color: var(--color-success);
 }
 
 .greek-value.negative {
-  color: #f44336;
+  color: var(--color-danger);
 }
 
 .greek-value.neutral {
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 /* Responsive */

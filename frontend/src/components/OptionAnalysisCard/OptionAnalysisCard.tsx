@@ -1,4 +1,5 @@
 import type { OptionAnalysis } from '../../types';
+import { GlassPanel } from '../common/GlassPanel';
 import './OptionAnalysisCard.css';
 
 interface OptionAnalysisCardProps {
@@ -27,7 +28,7 @@ export function OptionAnalysisCard({ analysis }: OptionAnalysisCardProps) {
   };
 
   return (
-    <div className="option-analysis-card">
+    <GlassPanel className="option-analysis-card" variant="medium">
       {/* Header */}
       <div className="card-header">
         <h3>{option.symbol} ${option.strike} {option.option_type.toUpperCase()}</h3>
@@ -115,6 +116,6 @@ export function OptionAnalysisCard({ analysis }: OptionAnalysisCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </GlassPanel>
   );
 }

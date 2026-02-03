@@ -6,13 +6,11 @@
 .options-chain-table {
   width: 100%;
   overflow-x: auto;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  box-shadow: var(--shadow-sm);
+  /* GlassPanel handles bg, border, radius, shadow */
+  
   /* Scrollbar styling for a 'terminal' feel */
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) var(--color-surface);
+  scrollbar-color: var(--color-border) transparent;
 }
 
 .options-chain-table::-webkit-scrollbar {
@@ -20,7 +18,7 @@
   width: 8px;
 }
 .options-chain-table::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: transparent;
 }
 .options-chain-table::-webkit-scrollbar-thumb {
   background-color: var(--color-border);

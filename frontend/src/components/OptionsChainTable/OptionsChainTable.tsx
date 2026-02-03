@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { Option } from '../../types';
 import { useOptionAnalysis } from './useOptionAnalysis';
 import { OptionTooltip } from './OptionTooltip';
+import { GlassPanel } from '../common/GlassPanel';
 import './OptionsChainTable.css';
 
 interface OptionsChainTableProps {
@@ -199,7 +200,7 @@ export function OptionsChainTable({
   };
 
   return (
-    <div className="options-chain-table">
+    <GlassPanel className="options-chain-table" variant="strong">
       <table>
         <thead>
           <tr>
@@ -315,6 +316,6 @@ export function OptionsChainTable({
         anchorRect={activeTooltip?.anchorRect ?? null}
         visible={!!activeTooltip}
       />
-    </div>
+    </GlassPanel>
   );
 }

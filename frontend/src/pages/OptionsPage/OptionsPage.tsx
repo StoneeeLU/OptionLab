@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { OptionsChainTable } from '../../components/OptionsChainTable';
 import { OptionAnalysisCard } from '../../components/OptionAnalysisCard';
+import { GlassPanel } from '../../components/common/GlassPanel';
+import { Skeleton } from '../../components/common/Skeleton';
+import { AnimatedContainer } from '../../components/common/AnimatedContainer';
 import { analyzeOption, getOptionChain } from '../../services/api';
 import type { Option, OptionAnalysis, OptionChain } from '../../types';
 import './OptionsPage.css';
@@ -173,9 +176,50 @@ export function OptionsPage() {
       </div>
 
       {loading && (
-        <div className="loading-state">
-          <p>Loading options chain...</p>
-        </div>
+        <AnimatedContainer className="options-content" animation="fadeIn">
+          <div className="options-split">
+            <section className="options-left">
+              <GlassPanel className="chain-info">
+                <Skeleton variant="text" width="40%" height={32} style={{ marginBottom: 8 }} />
+                <Skeleton variant="text" width="20%" height={24} />
+              </GlassPanel>
+
+              <div className="expiration-tabs">
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} variant="rect" width={80} height={40} style={{ borderRadius: 4 }} />
+                ))}
+              </div>
+
+              <GlassPanel className="filters">
+                <div className="filter-group">
+                  <Skeleton variant="text" width={60} style={{ marginBottom: 4 }} />
+                  <Skeleton variant="rect" width={150} height={35} />
+                </div>
+                <div className="filter-group">
+                  <Skeleton variant="text" width={80} style={{ marginBottom: 4 }} />
+                  <Skeleton variant="rect" width={100} height={35} />
+                </div>
+                <div className="filter-group">
+                  <Skeleton variant="text" width={60} style={{ marginBottom: 4 }} />
+                  <Skeleton variant="rect" width={100} height={35} />
+                </div>
+              </GlassPanel>
+
+              <GlassPanel className="options-chain-table-skeleton" style={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Skeleton variant="rect" width="95%" height="90%" />
+              </GlassPanel>
+            </section>
+
+            <aside className="options-right">
+              <GlassPanel className="analysis-panel">
+                <div className="analysis-panel-header">
+                  <Skeleton variant="text" width="50%" height={24} />
+                </div>
+                <Skeleton variant="rect" width="100%" height={200} />
+              </GlassPanel>
+            </aside>
+          </div>
+        </AnimatedContainer>
       )}
 
       {error && (
@@ -185,15 +229,15 @@ export function OptionsPage() {
       )}
 
       {optionChain && !loading && (
-        <div className="options-content">
+        <AnimatedContainer className="options-content" animation="slideUp">
           <div className="options-split">
             <section className="options-left" aria-label="Options chain">
-              <div className="chain-info">
+              <GlassPanel className="chain-info" variant="subtle">
                 <h2>{optionChain.underlying}</h2>
                 <p className="spot-price">
                   Spot Price: <strong>${optionChain.spot_price.toFixed(2)}</strong>
                 </p>
-              </div>
+              </GlassPanel>
 
               {/* Expiration Date Tabs */}
                <div className="expiration-tabs">
@@ -214,7 +258,7 @@ export function OptionsPage() {
                </div>
 
               {/* Filters */}
-              <div className="filters">
+              <GlassPanel className="filters" variant="subtle">
                 <div className="filter-group">
                   <label htmlFor="moneyness">Moneyness:</label>
                   <select
@@ -250,7 +294,7 @@ export function OptionsPage() {
                     min="0"
                   />
                 </div>
-              </div>
+              </GlassPanel>
 
               {/* Options Chain Table */}
               <OptionsChainTable
@@ -265,7 +309,7 @@ export function OptionsPage() {
             </section>
 
             <aside className="options-right" aria-label="Option analysis">
-              <div className="analysis-panel">
+              <GlassPanel className="analysis-panel">
                 <div className="analysis-panel-header">
                   <h3>Analysis</h3>
                   {selectedOption && (
@@ -275,16 +319,20 @@ export function OptionsPage() {
                   )}
                 </div>
 
-                {analysisLoading && <div className="analysis-empty">Loading analysis…</div>}
+                {analysisLoading && (
+                  <div className="analysis-loading-skeleton">
+                     <Skeleton variant="rect" width="100%" height={300} style={{borderRadius: 8}} />
+                  </div>
+                )}
                 {analysisError && <div className="analysis-error">Error: {analysisError}</div>}
                 {!analysisLoading && !analysisError && !analysis && (
                   <div className="analysis-empty">Select a strike to see Greeks and valuation.</div>
                 )}
                 {analysis && <OptionAnalysisCard analysis={analysis} />}
-              </div>
+              </GlassPanel>
             </aside>
           </div>
-        </div>
+        </AnimatedContainer>
       )}
     </div>
   );

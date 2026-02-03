@@ -99,10 +99,10 @@ describe('OptionsPage', () => {
     await user.type(input, 'AAPL');
     await user.keyboard('{Enter}');
 
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('status').length).toBeGreaterThan(0);
 
     await waitFor(() => {
-      expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+      expect(screen.queryAllByRole('status')).toHaveLength(0);
     });
   });
 
