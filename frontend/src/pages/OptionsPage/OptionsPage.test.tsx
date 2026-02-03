@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router-dom';
 import { OptionsPage } from './OptionsPage';
 import * as api from '../../services/api';
 import type { OptionChain } from '../../types';
@@ -152,13 +152,16 @@ describe('OptionsPage', () => {
     });
 
     // Click on the second expiration date tab
-    const tab2 = screen.getByText('2027-02-19');
-    await user.click(tab2);
+    await user.click(screen.getByText('2027-02-19'));
 
-    // Should filter to show only options for that expiration
+    // Should fetch chain for that expiration and mark tab active
     await waitFor(() => {
-      // This is a simplified check - the actual implementation will filter the table
-      expect(tab2).toHaveClass('active');
+      // Re-query after state updates to avoid stale element references.
+      expect(screen.getByText('2027-02-19')).toHaveClass('active');
+    });
+
+    await waitFor(() => {
+      expect(api.getOptionChain).toHaveBeenCalledWith('AAPL', { expiry: '2027-02-19' });
     });
   });
 
@@ -197,6 +200,24 @@ describe('OptionsPage', () => {
 
     // Should filter out options with volume < 600
     // Detailed assertion would depend on implementation
+  });
+
+  it('should auto-load options chain from query param', async () => {
+    vi.mocked(api.getOptionChain).mockResolvedValue(mockOptionChain);
+
+    render(
+      <MemoryRouter initialEntries={['/options?symbol=AAPL']}>
+        <Routes>
+          <Route path="/options" element={<OptionsPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(api.getOptionChain).toHaveBeenCalledWith('AAPL');
+    });
+
+    expect(screen.getByText('150.00')).toBeInTheDocument();
   });
 
   it('renders with split layout (table + analysis panel)', async () => {

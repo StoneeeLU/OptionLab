@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { OptionsChainTable } from '../../components/OptionsChainTable';
 import { OptionAnalysisCard } from '../../components/OptionAnalysisCard';
 import { analyzeOption, getOptionChain } from '../../services/api';
@@ -6,6 +7,7 @@ import type { Option, OptionAnalysis, OptionChain } from '../../types';
 import './OptionsPage.css';
 
 export function OptionsPage() {
+  const location = useLocation();
   const [inputValue, setInputValue] = useState('');
   const [optionChain, setOptionChain] = useState<OptionChain | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,23 +22,32 @@ export function OptionsPage() {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
-  const handleSearch = async (searchSymbol: string) => {
+  const lastLoadedSymbolRef = useRef<string>('');
+
+  const handleSearch = async (searchSymbol: string, expiryOverride?: string) => {
     if (!searchSymbol.trim()) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const chain = await getOptionChain(searchSymbol.toUpperCase());
-      setOptionChain(chain);
-      setSelectedOption(null);
-      setAnalysis(null);
-      setAnalysisError(null);
+       const upper = searchSymbol.toUpperCase();
+       const chain = expiryOverride
+         ? await getOptionChain(upper, { expiry: expiryOverride })
+         : await getOptionChain(upper);
+       setOptionChain(chain);
+       setSelectedOption(null);
+       setAnalysis(null);
+       setAnalysisError(null);
       
-      // Auto-select first expiration
-      if (chain.expiration_dates.length > 0) {
-        setSelectedExpiry(chain.expiration_dates[0]);
-      }
+       // Select expiry: keep requested expiry if provided, else auto-select first
+       if (expiryOverride) {
+         setSelectedExpiry(expiryOverride);
+       } else if (chain.expiration_dates.length > 0) {
+         setSelectedExpiry(chain.expiration_dates[0]);
+       }
+
+       lastLoadedSymbolRef.current = upper;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load options chain');
       setOptionChain(null);
@@ -44,6 +55,18 @@ export function OptionsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const symbolParam = params.get('symbol');
+    if (!symbolParam) return;
+
+    const upper = symbolParam.toUpperCase();
+    if (lastLoadedSymbolRef.current === upper) return;
+
+    setInputValue(upper);
+    void handleSearch(upper);
+  }, [location.search]);
 
   const handleSelectionChange = async (selectedOptions: Option[]) => {
     if (!optionChain) return
@@ -173,17 +196,22 @@ export function OptionsPage() {
               </div>
 
               {/* Expiration Date Tabs */}
-              <div className="expiration-tabs">
-                {optionChain.expiration_dates.map((expiry) => (
-                  <button
-                    key={expiry}
-                    className={`expiry-tab ${selectedExpiry === expiry ? 'active' : ''}`}
-                    onClick={() => setSelectedExpiry(expiry)}
-                  >
-                    {expiry}
-                  </button>
-                ))}
-              </div>
+               <div className="expiration-tabs">
+                 {optionChain.expiration_dates.map((expiry) => (
+                   <button
+                     key={expiry}
+                     className={`expiry-tab ${selectedExpiry === expiry ? 'active' : ''}`}
+                     onClick={() => {
+                       setSelectedExpiry(expiry);
+                       if (lastLoadedSymbolRef.current) {
+                         void handleSearch(lastLoadedSymbolRef.current, expiry);
+                       }
+                     }}
+                   >
+                     {expiry}
+                   </button>
+                 ))}
+               </div>
 
               {/* Filters */}
               <div className="filters">
