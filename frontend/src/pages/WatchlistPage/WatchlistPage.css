@@ -1,0 +1,77 @@
+.watchlist-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.watchlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.watchlist-header .subtitle {
+  margin-top: 0.25rem;
+  color: var(--color-text-secondary);
+}
+
+.empty {
+  padding: 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.symbol {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.symbol:hover {
+  color: var(--color-primary);
+}
+
+.meta {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.remove {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border: 1px solid var(--color-border);
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+}
+
+.remove:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
