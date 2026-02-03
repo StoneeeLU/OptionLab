@@ -39,6 +39,26 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Options Chain */
+  --options-call-bg: var(--color-success-light);
+  --options-call-text: var(--color-success-hover);
+  --options-put-bg: var(--color-danger-light);
+  --options-put-text: var(--color-danger-hover);
+  --options-strike-bg: var(--color-surface);
+  --options-atm-border: var(--color-warning);
+  --options-atm-bg: var(--color-warning-light);
+  --options-atm-text: var(--color-warning-hover);
+  --options-itm-bg: rgba(16, 185, 129, 0.08);
+  --options-otm-bg: transparent;
+  --options-selected-bg: var(--color-primary-light);
+  --options-selected-border: var(--color-primary);
+  --options-hover-bg: var(--color-surface-hover);
+  --options-iv-low: var(--color-success);
+  --options-iv-mid: var(--color-warning);
+  --options-iv-high: var(--color-danger);
+  --options-volume-low: var(--color-text-muted);
+  --options-volume-high: var(--color-text);
 }
 
 :root[data-theme="dark"] {
@@ -80,6 +100,26 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* Options Chain */
+  --options-call-bg: var(--color-success-light);
+  --options-call-text: var(--color-success);
+  --options-put-bg: var(--color-danger-light);
+  --options-put-text: var(--color-danger);
+  --options-strike-bg: var(--color-surface);
+  --options-atm-border: var(--color-warning);
+  --options-atm-bg: var(--color-warning-light);
+  --options-atm-text: var(--color-warning);
+  --options-itm-bg: rgba(63, 185, 80, 0.15);
+  --options-otm-bg: transparent;
+  --options-selected-bg: var(--color-primary-light);
+  --options-selected-border: var(--color-primary);
+  --options-hover-bg: var(--color-surface-hover);
+  --options-iv-low: var(--color-success);
+  --options-iv-mid: var(--color-warning);
+  --options-iv-high: var(--color-danger);
+  --options-volume-low: var(--color-text-muted);
+  --options-volume-high: var(--color-text);
 }
 
 /* Global Styles */
