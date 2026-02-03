@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { VolatilitySurfaceChart } from '../../components/VolatilitySurfaceChart'
+import { GlassPanel, Skeleton, AnimatedContainer } from '../../components/common'
 import { getVolatilitySurfaceForSymbol } from '../../services/api'
 import type { VolatilitySurfaceResponse } from '../../types'
 import './VolatilitySurfacePage.css'
@@ -41,29 +42,50 @@ export function VolatilitySurfacePage() {
 
   return (
     <div className="vol-surface-page">
-      <header className="vol-surface-header">
-        <div>
-          <h1>Volatility Surface</h1>
-          <p className="subtitle">3D view of implied volatility across strikes and expiries.</p>
-        </div>
+      <AnimatedContainer animation="slideUp">
+        <GlassPanel className="vol-surface-header-panel">
+          <div className="header-content">
+            <h1>Volatility Surface</h1>
+            <p className="subtitle">3D view of implied volatility across strikes and expiries.</p>
+          </div>
 
-        <form className="symbol-form" onSubmit={handleSubmit}>
-          <input
-            className="symbol-input"
-            value={symbol}
-            onChange={(e) => setSymbol(e.target.value)}
-            placeholder="Enter symbol (e.g., AAPL)"
-            aria-label="Symbol"
-          />
-          <button className="fetch-btn" type="submit" disabled={loading}>
-            {loading ? 'Loading…' : 'Load'}
-          </button>
-        </form>
-      </header>
+          <form className="symbol-form" onSubmit={handleSubmit}>
+            <input
+              className="symbol-input"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+              placeholder="Enter symbol (e.g., AAPL)"
+              aria-label="Symbol"
+            />
+            <button className="fetch-btn" type="submit" disabled={loading}>
+              {loading ? 'Loading…' : 'Load'}
+            </button>
+          </form>
+        </GlassPanel>
+      </AnimatedContainer>
 
-      {error && <div className="error">Error: {error}</div>}
+      {error && (
+        <AnimatedContainer animation="fadeIn">
+          <div className="error">Error: {error}</div>
+        </AnimatedContainer>
+      )}
 
-      <VolatilitySurfaceChart data={chartData} loading={loading} />
+      <AnimatedContainer animation="fadeIn" className="chart-section">
+        {loading ? (
+          <GlassPanel className="chart-skeleton-container">
+            <div className="chart-header-skeleton">
+              <Skeleton variant="text" width={250} height={32} className="mb-2" />
+              <Skeleton variant="text" width={350} height={20} />
+            </div>
+            <Skeleton variant="rect" width="100%" height={600} className="chart-canvas-skeleton" />
+            <div className="chart-controls-skeleton">
+              <Skeleton variant="text" width={300} height={20} />
+            </div>
+          </GlassPanel>
+        ) : (
+          <VolatilitySurfaceChart data={chartData} loading={loading} />
+        )}
+      </AnimatedContainer>
     </div>
   )
 }
