@@ -18,6 +18,7 @@ vi.mock('echarts', () => {
     graphic: {
       LinearGradient,
     },
+    registerTheme: vi.fn(),
   }
 })
 
