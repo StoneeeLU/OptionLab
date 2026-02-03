@@ -1,5 +1,13 @@
 /* OptionLab Theme System - CSS Custom Properties */
 
+:root {
+  /* Motion Tokens */
+  --transition-fast: 0.15s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
 :root[data-theme="light"] {
   /* Colors */
   --color-background: #ffffff;
@@ -39,6 +47,16 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 16px;
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, #60a5fa 100%);
+  --gradient-surface: linear-gradient(to bottom right, #ffffff, #f3f4f6);
 
   /* Options Chain */
   --options-call-bg: var(--color-success-light);
@@ -100,6 +118,16 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(22, 27, 34, 0.75);
+  --glass-border: rgba(48, 54, 61, 0.6);
+  --glass-blur: 16px;
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, #1f6feb 100%);
+  --gradient-surface: linear-gradient(to bottom right, #161b22, #0d1117);
 
   /* Options Chain */
   --options-call-bg: var(--color-success-light);
@@ -256,4 +284,31 @@ tr:hover {
 
 .slide-in {
   animation: slideIn 0.3s ease;
+}
+
+/* Glassmorphism Utility */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel {
+    background: var(--color-surface);
+    opacity: 0.95;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01s !important;
+    scroll-behavior: auto !important;
+  }
 }
