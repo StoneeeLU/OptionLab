@@ -1,126 +1,156 @@
 .sidebar {
-  width: 260px;
+  width: 280px;
   height: 100%;
-  background-color: var(--color-surface);
-  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 12px;
-  transition: width 140ms ease;
+  padding: 1.25rem;
+  gap: 1.5rem;
+  transition: width var(--transition-normal) var(--ease-out-expo);
+  z-index: 10;
+  border-width: 0 1px 0 0;
+  border-radius: 0;
 }
 
 .sidebar.collapsed {
-  width: 74px;
+  width: 80px;
+  align-items: center;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  height: 40px;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  width: 100%;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 0.75rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .brand {
+  display: none;
 }
 
 .brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   font-weight: 800;
-  letter-spacing: 0.6px;
-  color: var(--color-text);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-primary) 36%, var(--color-surface) 64%),
-    var(--color-surface)
-  );
-  border: 1px solid color-mix(in srgb, var(--color-border) 60%, var(--color-primary) 40%);
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
 }
 
 .brand-text {
   font-weight: 700;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
 }
 
 .collapse-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
   color: var(--color-text-secondary);
+  display: grid;
+  place-items: center;
+  transition: all 0.2s ease;
 }
 
 .collapse-btn:hover {
   background: var(--color-surface-hover);
   color: var(--color-text);
+  border-color: var(--color-border);
 }
 
-.collapse-glyph {
-  font-size: 18px;
-  line-height: 1;
+.sidebar.collapsed .collapse-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding-top: 6px;
+  gap: 0.5rem;
+  width: 100%;
+  flex: 1;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 10px;
+  gap: 0.875rem;
+  padding: 0.75rem;
   border-radius: 12px;
-  color: var(--color-text);
-  border: 1px solid transparent;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  position: relative;
+  overflow: hidden;
+  height: 48px;
 }
 
 .nav-link:hover {
   background: var(--color-surface-hover);
-  border-color: var(--color-border);
+  color: var(--color-text);
+  transform: translateX(2px);
 }
 
 .nav-link.active {
-  background: color-mix(in srgb, var(--color-primary-light) 65%, transparent);
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border) 65%);
+  background: var(--options-selected-bg);
+  color: var(--options-selected-border);
+  font-weight: 500;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: var(--color-primary);
+  display: none; /* Let's try without the bar for now, or maybe add it back if it looks too plain */
 }
 
 .nav-icon {
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.nav-link:hover .nav-icon {
+  transform: scale(1.1);
 }
 
 .nav-label {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .sidebar-footer {
   margin-top: auto;
-}
-
-.sidebar.collapsed .theme-label {
-  display: none;
-}
-
-.sidebar.collapsed .theme-toggle {
   width: 100%;
-  justify-content: center;
-  padding: 0.5rem;
 }

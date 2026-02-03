@@ -1,13 +1,49 @@
 .layout-root {
   display: flex;
   width: 100%;
-  height: 100%;
-  background-color: var(--color-background);
+  height: 100vh;
+  background: var(--color-background);
+  /* Add a subtle ambient gradient mesh */
+  background-image: 
+    radial-gradient(at 0% 0%, color-mix(in srgb, var(--color-primary-light) 40%, transparent) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, color-mix(in srgb, var(--color-success-light) 20%, transparent) 0px, transparent 50%);
+  background-attachment: fixed;
+  overflow: hidden;
 }
 
 .layout-main {
   flex: 1;
   min-width: 0;
-  padding: 16px;
-  overflow: auto;
+  /* Add some breathing room */
+  padding: 24px; 
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* logic for nested flex scroll */
+}
+
+/* Scrollbar styling for a cleaner look */
+.layout-main::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.layout-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.layout-main::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+.layout-main::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }

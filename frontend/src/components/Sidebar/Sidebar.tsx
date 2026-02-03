@@ -1,80 +1,50 @@
-import { useMemo, useState, type ComponentType } from 'react'
+import { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { 
+  Home, 
+  Layers, 
+  Activity, 
+  Star, 
+  ChevronLeft, 
+  ChevronRight
+} from 'lucide-react'
 import { ThemeToggle } from '../ThemeToggle'
+import { GlassPanel } from '../common/GlassPanel'
 import './Sidebar.css'
-
-type NavItem = {
-  to: string
-  label: string
-  icon: ComponentType<{ className?: string }>
-}
-
-function HomeIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M3 10.5L12 3l9 7.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5 9.5V21h14V9.5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M9.5 21v-6h5v6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function ChainIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M4 7h16" strokeWidth="2" strokeLinecap="round" />
-      <path d="M4 12h16" strokeWidth="2" strokeLinecap="round" />
-      <path d="M4 17h16" strokeWidth="2" strokeLinecap="round" />
-      <path d="M8 7v10" strokeWidth="2" strokeLinecap="round" />
-      <path d="M16 7v10" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function SurfaceIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M4 19V5" strokeWidth="2" strokeLinecap="round" />
-      <path d="M4 19h16" strokeWidth="2" strokeLinecap="round" />
-      <path d="M6.5 16.5l4-5 4 2 4.5-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M10.5 11.5l-2-2" strokeWidth="2" strokeLinecap="round" />
-      <path d="M14.5 13.5l-2-2" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function StarIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path
-        d="M12 2l3 7 7 .6-5.4 4.6 1.7 7-6.3-3.8-6.3 3.8 1.7-7L2 9.6 9 9l3-7z"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
 
-  const navItems = useMemo<NavItem[]>(
+  const navItems = useMemo(
     () => [
-      { to: '/', label: 'Home', icon: HomeIcon },
-      { to: '/options', label: 'Options', icon: ChainIcon },
-      { to: '/volatility', label: 'Volatility', icon: SurfaceIcon },
-      { to: '/watchlist', label: 'Watchlist', icon: StarIcon },
+      { to: '/', label: 'Home', icon: Home },
+      { to: '/options', label: 'Options', icon: Layers },
+      { to: '/volatility', label: 'Volatility', icon: Activity },
+      { to: '/watchlist', label: 'Watchlist', icon: Star },
     ],
     [],
   )
 
   return (
-    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <GlassPanel 
+      className={`sidebar ${collapsed ? 'collapsed' : ''}`}
+      variant="subtle"
+    >
       <div className="sidebar-header">
         <div className="brand" aria-label="OptionLab">
           <div className="brand-mark">OL</div>
-          {!collapsed && <div className="brand-text">OptionLab</div>}
+          {/* Note: AnimatePresence for exit animations would break existing tests that expect immediate removal */}
+          {!collapsed && (
+            <motion.div 
+              className="brand-text"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              OptionLab
+            </motion.div>
+          )}
         </div>
 
         <button
@@ -84,9 +54,7 @@ export function Sidebar() {
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           title={collapsed ? 'Expand' : 'Collapse'}
         >
-          <span className="collapse-glyph" aria-hidden>
-            {collapsed ? '›' : '‹'}
-          </span>
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
 
@@ -98,8 +66,17 @@ export function Sidebar() {
             aria-label={item.label}
             className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
           >
-            <item.icon className="nav-icon" />
-            {!collapsed && <span className="nav-label">{item.label}</span>}
+            <item.icon className="nav-icon" size={20} />
+            {!collapsed && (
+              <motion.span 
+                className="nav-label"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {item.label}
+              </motion.span>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -107,6 +84,7 @@ export function Sidebar() {
       <div className="sidebar-footer">
         <ThemeToggle />
       </div>
-    </aside>
+    </GlassPanel>
   )
 }
+
