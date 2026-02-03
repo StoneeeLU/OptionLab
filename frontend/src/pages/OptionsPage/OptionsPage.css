@@ -111,10 +111,29 @@
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.expiration-tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.expiration-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.expiration-tabs::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-border) 70%, transparent);
+  border-radius: 999px;
 }
 
 .expiry-tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: 10px 20px;
   background-color: var(--color-surface);
   border: 2px solid var(--color-border);
