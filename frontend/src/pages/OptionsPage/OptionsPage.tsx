@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { OptionsChainTable } from '../../components/OptionsChainTable';
-import { getOptionChain } from '../../services/api';
-import type { OptionChain } from '../../types';
+import { OptionAnalysisCard } from '../../components/OptionAnalysisCard';
+import { analyzeOption, getOptionChain } from '../../services/api';
+import type { Option, OptionAnalysis, OptionChain } from '../../types';
 import './OptionsPage.css';
 
 export function OptionsPage() {
@@ -14,6 +15,11 @@ export function OptionsPage() {
   const [minVolume, setMinVolume] = useState<number>(0);
   const [minOI, setMinOI] = useState<number>(0);
 
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [analysis, setAnalysis] = useState<OptionAnalysis | null>(null);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+
   const handleSearch = async (searchSymbol: string) => {
     if (!searchSymbol.trim()) return;
 
@@ -23,6 +29,9 @@ export function OptionsPage() {
     try {
       const chain = await getOptionChain(searchSymbol.toUpperCase());
       setOptionChain(chain);
+      setSelectedOption(null);
+      setAnalysis(null);
+      setAnalysisError(null);
       
       // Auto-select first expiration
       if (chain.expiration_dates.length > 0) {
@@ -35,6 +44,44 @@ export function OptionsPage() {
       setLoading(false);
     }
   };
+
+  const handleSelectionChange = async (selectedOptions: Option[]) => {
+    if (!optionChain) return
+    if (selectedOptions.length === 0) return
+
+    const preferred =
+      selectedOptions.find((opt) => opt.option_type === 'call') ??
+      selectedOptions.find((opt) => opt.option_type === 'put') ??
+      selectedOptions[0]
+
+    setSelectedOption(preferred)
+    setAnalysis(null)
+    setAnalysisError(null)
+    setAnalysisLoading(true)
+
+    try {
+      const res = await analyzeOption({
+        symbol: preferred.symbol,
+        strike: preferred.strike,
+        expiry: preferred.expiry,
+        option_type: preferred.option_type,
+        exercise_style: preferred.exercise_style ?? 'american',
+        bid: preferred.bid,
+        ask: preferred.ask,
+        last: preferred.last,
+        volume: preferred.volume,
+        open_interest: preferred.open_interest,
+        implied_volatility: preferred.implied_volatility,
+        spot_price: optionChain.spot_price,
+        risk_free_rate: 0.05,
+      })
+      setAnalysis(res)
+    } catch (err) {
+      setAnalysisError(err instanceof Error ? err.message : 'Failed to analyze option')
+    } finally {
+      setAnalysisLoading(false)
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,74 +163,99 @@ export function OptionsPage() {
 
       {optionChain && !loading && (
         <div className="options-content">
-          <div className="chain-info">
-            <h2>{optionChain.underlying}</h2>
-            <p className="spot-price">
-              Spot Price: <strong>${optionChain.spot_price.toFixed(2)}</strong>
-            </p>
-          </div>
+          <div className="options-split">
+            <section className="options-left" aria-label="Options chain">
+              <div className="chain-info">
+                <h2>{optionChain.underlying}</h2>
+                <p className="spot-price">
+                  Spot Price: <strong>${optionChain.spot_price.toFixed(2)}</strong>
+                </p>
+              </div>
 
-          {/* Expiration Date Tabs */}
-          <div className="expiration-tabs">
-            {optionChain.expiration_dates.map((expiry) => (
-              <button
-                key={expiry}
-                className={`expiry-tab ${selectedExpiry === expiry ? 'active' : ''}`}
-                onClick={() => setSelectedExpiry(expiry)}
-              >
-                {expiry}
-              </button>
-            ))}
-          </div>
+              {/* Expiration Date Tabs */}
+              <div className="expiration-tabs">
+                {optionChain.expiration_dates.map((expiry) => (
+                  <button
+                    key={expiry}
+                    className={`expiry-tab ${selectedExpiry === expiry ? 'active' : ''}`}
+                    onClick={() => setSelectedExpiry(expiry)}
+                  >
+                    {expiry}
+                  </button>
+                ))}
+              </div>
 
-          {/* Filters */}
-          <div className="filters">
-            <div className="filter-group">
-              <label htmlFor="moneyness">Moneyness:</label>
-              <select
-                id="moneyness"
-                value={moneynessFilter}
-                onChange={(e) => setMoneynessFilter(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="itm">In The Money</option>
-                <option value="atm">At The Money</option>
-                <option value="otm">Out of The Money</option>
-              </select>
-            </div>
+              {/* Filters */}
+              <div className="filters">
+                <div className="filter-group">
+                  <label htmlFor="moneyness">Moneyness:</label>
+                  <select
+                    id="moneyness"
+                    value={moneynessFilter}
+                    onChange={(e) => setMoneynessFilter(e.target.value)}
+                  >
+                    <option value="all">All</option>
+                    <option value="itm">In The Money</option>
+                    <option value="atm">At The Money</option>
+                    <option value="otm">Out of The Money</option>
+                  </select>
+                </div>
 
-            <div className="filter-group">
-              <label htmlFor="min-volume">Min Volume:</label>
-              <input
-                type="number"
-                id="min-volume"
-                value={minVolume}
-                onChange={(e) => setMinVolume(Number(e.target.value))}
-                min="0"
+                <div className="filter-group">
+                  <label htmlFor="min-volume">Min Volume:</label>
+                  <input
+                    type="number"
+                    id="min-volume"
+                    value={minVolume}
+                    onChange={(e) => setMinVolume(Number(e.target.value))}
+                    min="0"
+                  />
+                </div>
+
+                <div className="filter-group">
+                  <label htmlFor="min-oi">Min OI:</label>
+                  <input
+                    type="number"
+                    id="min-oi"
+                    value={minOI}
+                    onChange={(e) => setMinOI(Number(e.target.value))}
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              {/* Options Chain Table */}
+              <OptionsChainTable
+                options={filteredOptions}
+                spotPrice={optionChain.spot_price}
+                onSelectionChange={handleSelectionChange}
               />
-            </div>
 
-            <div className="filter-group">
-              <label htmlFor="min-oi">Min OI:</label>
-              <input
-                type="number"
-                id="min-oi"
-                value={minOI}
-                onChange={(e) => setMinOI(Number(e.target.value))}
-                min="0"
-              />
-            </div>
+              {filteredOptions.length === 0 && (
+                <p className="no-results">No options match the selected filters.</p>
+              )}
+            </section>
+
+            <aside className="options-right" aria-label="Option analysis">
+              <div className="analysis-panel">
+                <div className="analysis-panel-header">
+                  <h3>Analysis</h3>
+                  {selectedOption && (
+                    <div className="analysis-selected" aria-label="Selected option">
+                      {selectedOption.symbol} ${selectedOption.strike.toFixed(2)} {selectedOption.option_type}
+                    </div>
+                  )}
+                </div>
+
+                {analysisLoading && <div className="analysis-empty">Loading analysis…</div>}
+                {analysisError && <div className="analysis-error">Error: {analysisError}</div>}
+                {!analysisLoading && !analysisError && !analysis && (
+                  <div className="analysis-empty">Select a strike to see Greeks and valuation.</div>
+                )}
+                {analysis && <OptionAnalysisCard analysis={analysis} />}
+              </div>
+            </aside>
           </div>
-
-          {/* Options Chain Table */}
-          <OptionsChainTable
-            options={filteredOptions}
-            spotPrice={optionChain.spot_price}
-          />
-
-          {filteredOptions.length === 0 && (
-            <p className="no-results">No options match the selected filters.</p>
-          )}
         </div>
       )}
     </div>

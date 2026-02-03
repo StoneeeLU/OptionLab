@@ -198,4 +198,63 @@ describe('OptionsPage', () => {
     // Should filter out options with volume < 600
     // Detailed assertion would depend on implementation
   });
+
+  it('renders with split layout (table + analysis panel)', async () => {
+    const user = userEvent.setup()
+    vi.mocked(api.getOptionChain).mockResolvedValue(mockOptionChain)
+
+    renderWithRouter(<OptionsPage />)
+
+    const input = screen.getByPlaceholderText(/enter symbol/i)
+    await user.type(input, 'AAPL')
+    await user.keyboard('{Enter}')
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /analysis/i })).toBeInTheDocument()
+    })
+    expect(screen.getByText(/select a strike/i)).toBeInTheDocument()
+  })
+
+  it('clicking a row updates the analysis card', async () => {
+    const user = userEvent.setup()
+    vi.mocked(api.getOptionChain).mockResolvedValue(mockOptionChain)
+    vi.mocked(api.analyzeOption).mockResolvedValue({
+      option: {
+        symbol: 'AAPL',
+        strike: 150,
+        expiry: '2027-01-25',
+        option_type: 'call',
+        exercise_style: 'american',
+        implied_volatility: 0.25,
+      },
+      greeks: { delta: 0.52, gamma: 0.02, theta: -0.05, vega: 0.12, rho: 0.03 },
+      theoretical_price: 5.3,
+      market_price: 5.2,
+      iv_percentile: 0.6,
+      historical_volatility: 0.2,
+      mispricing: 0.1,
+      valuation: 'cheap',
+    })
+
+    const { container } = renderWithRouter(<OptionsPage />)
+
+    const input = screen.getByPlaceholderText(/enter symbol/i)
+    await user.type(input, 'AAPL')
+    await user.keyboard('{Enter}')
+
+    // Click first strike row.
+    await waitFor(() => {
+      expect(container.querySelector('td.strike-cell')).toBeTruthy()
+    })
+
+    const strikeCell = container.querySelector('td.strike-cell') as HTMLElement
+    await user.click(strikeCell)
+
+    await waitFor(() => {
+      expect(api.analyzeOption).toHaveBeenCalled()
+    })
+
+    expect(screen.getByText(/greeks/i)).toBeInTheDocument()
+    expect(screen.getByText(/delta/i)).toBeInTheDocument()
+  })
 });
