@@ -64,8 +64,9 @@ export function CombinationAnalysisPanel({ analysis, loading = false }: Props) {
       },
       tooltip: {
         trigger: 'axis',
-        formatter: (params: any) => {
-          const data = params[0];
+        formatter: (params: unknown) => {
+          const points = params as Array<{ axisValue: string; data: number }>
+          const data = points[0]
           return `Price: $${data.axisValue}<br/>P&L: $${data.data.toFixed(2)}`;
         }
       },
@@ -135,9 +136,9 @@ export function CombinationAnalysisPanel({ analysis, loading = false }: Props) {
                 }
               },
               ...breakevenMarkers
-            ] as any
+            ] as unknown
           }
-        } as any
+        } as unknown as echarts.SeriesOption
       ]
     };
 

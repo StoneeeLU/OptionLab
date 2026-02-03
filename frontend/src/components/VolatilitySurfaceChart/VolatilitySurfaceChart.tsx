@@ -3,6 +3,13 @@ import * as echarts from 'echarts';
 import 'echarts-gl';
 import './VolatilitySurfaceChart.css';
 
+type TooltipPoint = [number, number, number]
+
+type TooltipParams = {
+  data?: TooltipPoint
+  value?: TooltipPoint
+}
+
 interface SurfaceData {
   surface_data: number[][]; // [strike, days, iv]
   strikes: number[];
@@ -38,11 +45,14 @@ export function VolatilitySurfaceChart({ data, loading = false }: Props) {
 
     const option: echarts.EChartsOption = {
       tooltip: {
-        formatter: (params: any) => {
-          const dataPoint = params.data || params.value;
-          return `Strike: $${dataPoint[0].toFixed(2)}<br/>` +
-                 `Days: ${dataPoint[1]}<br/>` +
-                 `IV: ${(dataPoint[2] * 100).toFixed(2)}%`;
+        formatter: (params: unknown) => {
+          const p = params as TooltipParams
+          const dataPoint = (p.data ?? p.value ?? [0, 0, 0]) as TooltipPoint
+          return (
+            `Strike: $${dataPoint[0].toFixed(2)}<br/>` +
+            `Days: ${dataPoint[1]}<br/>` +
+            `IV: ${(dataPoint[2] * 100).toFixed(2)}%`
+          )
         }
       },
       visualMap: {
@@ -119,7 +129,7 @@ export function VolatilitySurfaceChart({ data, loading = false }: Props) {
               borderColor: '#000'
             }
           }
-        } as any
+        } as unknown as echarts.SeriesOption
       ]
     };
 
