@@ -6,6 +6,7 @@ import {
   Layers, 
   Activity, 
   Star, 
+  BookOpen,
   ChevronLeft, 
   ChevronRight
 } from 'lucide-react'
@@ -22,6 +23,7 @@ export function Sidebar() {
       { to: '/options', label: 'Options', icon: Layers },
       { to: '/volatility', label: 'Volatility', icon: Activity },
       { to: '/watchlist', label: 'Watchlist', icon: Star },
+      { to: '/education', label: 'Education', icon: BookOpen },
     ],
     [],
   )
