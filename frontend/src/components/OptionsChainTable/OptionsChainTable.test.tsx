@@ -1,8 +1,15 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { OptionsChainTable } from './OptionsChainTable';
 import type { Option } from '../../types';
+import type { OptionAnalysis } from '../../types/analysis';
+import { analyzeOption } from '../../services/api';
+
+// Mock API
+vi.mock('../../services/api', () => ({
+  analyzeOption: vi.fn(),
+}));
 
 describe('OptionsChainTable', () => {
   const mockOptions: Option[] = [
@@ -79,6 +86,82 @@ describe('OptionsChainTable', () => {
       implied_volatility: 0.28,
     },
   ];
+
+  const mockAnalysis: OptionAnalysis = {
+    option: mockOptions[0],
+    greeks: { delta: 0.5, gamma: 0.05, theta: -0.05, vega: 0.1, rho: 0.01 },
+    theoretical_price: 7.65,
+    market_price: 7.6,
+    iv_percentile: 0.45,
+    historical_volatility: 0.20,
+    mispricing: 0.006,
+    valuation: 'fair',
+  };
+
+  beforeEach(() => {
+    vi.mocked(analyzeOption).mockReset();
+  });
+
+  it('should trigger analysis on hover', async () => {
+    vi.mocked(analyzeOption).mockResolvedValue(mockAnalysis);
+    
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+
+    // Find IV cell for first call option (0.23 -> 23.0%)
+    const ivCell = screen.getByText('23.0%').closest('td');
+    expect(ivCell).toBeInTheDocument();
+
+    // Hover
+    fireEvent.mouseEnter(ivCell!);
+
+    // Should show loading immediately
+    expect(screen.getByText('Analyzing...')).toBeInTheDocument();
+
+    // Wait for promise to resolve (debounce 150ms + async fetch)
+    await waitFor(() => {
+      expect(analyzeOption).toHaveBeenCalled();
+    }, { timeout: 1000 });
+
+    // Should show analysis data
+    expect(screen.getByText('Greeks')).toBeInTheDocument();
+    expect(screen.getByText('0.500')).toBeInTheDocument(); // Delta
+    expect(screen.getByText('FAIR')).toBeInTheDocument(); // Valuation
+  });
+
+  it('should handle API errors', async () => {
+    vi.mocked(analyzeOption).mockRejectedValue(new Error('API Error'));
+    
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+    const ivCell = screen.getByText('23.0%').closest('td');
+    
+    fireEvent.mouseEnter(ivCell!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Analysis failed')).toBeInTheDocument();
+    }, { timeout: 1000 });
+  });
+
+  it('should support keyboard focus', async () => {
+    vi.mocked(analyzeOption).mockResolvedValue(mockAnalysis);
+    
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+    const ivCell = screen.getByText('23.0%').closest('td');
+    
+    // Focus
+    fireEvent.focus(ivCell!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Greeks')).toBeInTheDocument();
+    }, { timeout: 1000 });
+
+    // Blur should hide (with delay)
+    fireEvent.blur(ivCell!);
+    
+    // Wait for hide timeout (100ms)
+    await waitFor(() => {
+      expect(screen.queryByText('Greeks')).not.toBeInTheDocument();
+    }, { timeout: 1000 });
+  });
 
   it('should render table with mock data', () => {
     render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
@@ -176,5 +259,56 @@ describe('OptionsChainTable', () => {
     // Should show headers but no data rows
     expect(screen.getByText('Strike')).toBeInTheDocument();
     expect(screen.queryByText('145.00')).not.toBeInTheDocument();
+  });
+
+  it('should apply ITM/OTM classes correctly', () => {
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+
+    // Spot price 150.0
+    // Call Strike 145 (<150) -> ITM
+    const itmRow = screen.getByText('145.00').closest('tr');
+    expect(itmRow).toBeInTheDocument();
+    
+    // Check call cells in this row have 'itm' class
+    const callCells = itmRow?.querySelectorAll('.call-data');
+    expect(callCells?.length).toBeGreaterThan(0);
+    callCells?.forEach(cell => expect(cell).toHaveClass('itm'));
+
+    // Put Strike 155 (>150) -> ITM
+    const itmPutRow = screen.getByText('155.00').closest('tr');
+    const putCells = itmPutRow?.querySelectorAll('.put-data');
+    expect(putCells?.length).toBeGreaterThan(0);
+    putCells?.forEach(cell => expect(cell).toHaveClass('itm'));
+  });
+
+  it('should render IV bars', () => {
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+
+    // Find IV cell (0.23 -> 23.0%)
+    const ivCell = screen.getByText('23.0%').closest('td');
+    expect(ivCell).toHaveClass('iv-cell');
+    
+    // Check for bar element
+    const bar = ivCell?.querySelector('.iv-bar');
+    expect(bar).toBeInTheDocument();
+    expect(bar).toHaveStyle('width: 23%');
+  });
+
+  it('should set volume intensity attributes', () => {
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+
+    // Max volume is 1000 (Call 150.0) -> Intensity 10
+    const volCell = screen.getByText('1000').closest('td');
+    expect(volCell).toHaveAttribute('data-volume-intensity', '10');
+  });
+
+  it('should render spread indicators', () => {
+    render(<OptionsChainTable options={mockOptions} spotPrice={150.0} />);
+
+    // 145 Call: Bid 7.5, Ask 7.7. Mid 7.6. Spread 0.2. 0.2/7.6 = 2.6% -> Medium
+    const bidCell = screen.getByText('7.50').closest('td');
+    const indicator = bidCell?.querySelector('.spread-indicator');
+    expect(indicator).toBeInTheDocument();
+    expect(indicator).toHaveClass('spread-medium');
   });
 });

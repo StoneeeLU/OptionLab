@@ -1,112 +1,337 @@
 /**
- * OptionsChainTable styles - basic styling for options chain display.
- * Theme-specific colors will be added later.
+ * OptionsChainTable styles - Professional Trading Terminal Theme
+ * Dark-mode optimized with high data density and clear hierarchy.
  */
 
 .options-chain-table {
   width: 100%;
   overflow-x: auto;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  /* Scrollbar styling for a 'terminal' feel */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-surface);
+}
+
+.options-chain-table::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.options-chain-table::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+.options-chain-table::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 4px;
 }
 
 .options-chain-table table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+  border-collapse: separate; /* Allows cleaner sticky headers and borders */
+  border-spacing: 0;
+  font-size: 13px; /* Tighter density */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" on, "lnum" on;
+  /* Numeric-friendly font stack */
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 .options-chain-table th,
 .options-chain-table td {
-  padding: 8px 12px;
+  padding: 5px 10px; /* Tight spacing for data density */
   text-align: right;
-  border: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border); /* Grid lines */
+  white-space: nowrap;
+  line-height: 1.4;
 }
 
-/* Section headers */
-.call-section-header {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  font-weight: 600;
+/* Remove right border from last column */
+.options-chain-table td:last-child,
+.options-chain-table th:last-child {
+  border-right: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Headers */
+/* -------------------------------------------------------------------------- */
+
+/* Section headers (CALLS / PUTS / Strike) */
+.call-section-header,
+.put-section-header,
+.strike-header {
   text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8em;
+  border-bottom: 1px solid var(--color-background); /* Separation from col headers */
+}
+
+.call-section-header {
+  background-color: var(--options-call-bg);
+  color: var(--options-call-text);
 }
 
 .put-section-header {
-  background-color: #ffebee;
-  color: #c62828;
-  font-weight: 600;
-  text-align: center;
+  background-color: var(--options-put-bg);
+  color: var(--options-put-text);
 }
 
 .strike-header {
-  background-color: #f5f5f5;
-  font-weight: 700;
-  text-align: center;
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+  border-left: 2px solid var(--color-border);
+  border-right: 2px solid var(--color-border);
+  z-index: 25; /* Highest priority */
 }
 
-/* Column headers */
+/* Sticky Column Headers */
 .options-chain-table thead th {
-  background-color: #fafafa;
-  font-weight: 600;
   position: sticky;
-  top: 0;
-  z-index: 10;
+  z-index: 20;
+  box-shadow: 0 1px 0 var(--color-border); /* Clean sticky border */
 }
 
-/* Data cells */
-.call-data {
-  background-color: #f1f8f4;
+/* Row 1: Sections (Calls/Puts) */
+.options-chain-table thead tr:nth-child(1) th {
+  top: 0;
+  height: 28px; /* Fixed assumption for layout */
+}
+
+/* Row 2: Columns (Bid/Ask/etc) */
+/* Offset to sit below Row 1. 
+   Assuming Row 1 height ~28-30px. 
+   Adjusting top ensures they don't hide under Row 1. 
+*/
+.options-chain-table thead tr:nth-child(2) th {
+  top: 29px; /* Matches approximate height of first row */
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: 0.85em;
+  z-index: 19;
+}
+
+/* Strike Header (Rowspan 2) needs to span both */
+.strike-header {
+  top: 0;
+  /* Ensure it has a background to cover content scrolling under */
+  background-color: var(--color-surface-hover); 
+  /* Center vertically */
+  vertical-align: middle;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Data Cells */
+/* -------------------------------------------------------------------------- */
+
+.call-data, 
+.put-data {
+  color: var(--color-text);
+  /* Very subtle tinting using color-mix */
+  /* If color-mix is not supported, it falls back to transparent (not ideal), 
+     but modern browsers support it. */
+  background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 96%);
 }
 
 .put-data {
-  background-color: #fef5f5;
+  background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 96%);
 }
 
 .strike-cell {
-  background-color: #fafafa;
-  font-weight: 600;
+  background-color: var(--options-strike-bg);
+  font-weight: 700;
   text-align: center;
+  color: var(--color-text);
+  border-left: 2px solid var(--color-border);
+  border-right: 2px solid var(--color-border);
+  background-clip: padding-box;
 }
 
-/* Row states */
+/* -------------------------------------------------------------------------- */
+/* Row States & Interactivity */
+/* -------------------------------------------------------------------------- */
+
 .options-chain-table tbody tr {
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  /* subtle transition for row interactions */
+  transition: background-color 0.12s ease-out;
 }
 
-.options-chain-table tbody tr:hover {
-  background-color: #f5f5f5;
+/* Enable transitions on cells where background colors actually change */
+.options-chain-table tbody tr .call-data,
+.options-chain-table tbody tr .put-data,
+.options-chain-table tbody tr .strike-cell {
+  transition: background-color 0.12s ease-out, color 0.12s ease-out, border-color 0.12s ease-out;
 }
 
-.options-chain-table tbody tr.selected {
-  background-color: #e3f2fd !important;
-  border: 2px solid #1976d2;
+@media (prefers-reduced-motion: reduce) {
+  .options-chain-table tbody tr,
+  .options-chain-table tbody tr .call-data,
+  .options-chain-table tbody tr .put-data,
+  .options-chain-table tbody tr .strike-cell {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
+/* Alternating rows for readability */
+.options-chain-table tbody tr:nth-child(even) .call-data {
+  background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface-hover) 94%);
+}
+.options-chain-table tbody tr:nth-child(even) .put-data {
+  background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface-hover) 94%);
+}
+.options-chain-table tbody tr:nth-child(even) .strike-cell {
+  background-color: var(--color-surface-hover);
+}
+
+/* Hover State */
+.options-chain-table tbody tr:hover .call-data,
+.options-chain-table tbody tr:hover .put-data,
+.options-chain-table tbody tr:hover .strike-cell {
+  background-color: var(--options-hover-bg) !important;
+}
+
+/* Selected State */
 .options-chain-table tbody tr.selected .call-data,
 .options-chain-table tbody tr.selected .put-data,
 .options-chain-table tbody tr.selected .strike-cell {
-  background-color: #e3f2fd !important;
+  background-color: var(--options-selected-bg) !important;
+  color: var(--color-text);
 }
 
-/* ATM strike highlighting */
-.options-chain-table tbody tr.atm-strike {
-  border-left: 4px solid #ff9800;
-  border-right: 4px solid #ff9800;
+.options-chain-table tbody tr.selected .strike-cell {
+   color: var(--color-primary);
+   border-left-color: var(--options-selected-border);
+   border-right-color: var(--options-selected-border);
 }
 
+/* Focus State (Accessibility) */
+.options-chain-table tbody tr:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+/* ATM Highlight */
 .options-chain-table tbody tr.atm-strike .strike-cell {
-  background-color: #fff3e0;
-  color: #e65100;
-  font-weight: 700;
+  background-color: var(--options-atm-bg) !important;
+  color: var(--options-atm-text);
+  box-shadow: inset 0 0 0 2px var(--options-atm-border);
 }
+
+/* Responsive behavior */
+
+/* -------------------------------------------------------------------------- */
+/* Visual Enhancements (ITM/OTM, Heatmap, etc) */
+/* -------------------------------------------------------------------------- */
+
+/* ITM Styling */
+.call-data.itm,
+.put-data.itm {
+  background-color: var(--options-itm-bg);
+  /* Add a subtle left/right border to distinguish ITM block? 
+     Maybe just background is enough for now as per spec. */
+}
+
+/* OTM Styling - explicit if needed, currently transparent/neutral */
+.call-data.otm,
+.put-data.otm {
+  background-color: var(--options-otm-bg);
+}
+
+/* IV Bar Visualization */
+.iv-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.iv-bar-container {
+  flex: 1;
+  height: 4px;
+  background-color: var(--color-surface-hover);
+  border-radius: 2px;
+  min-width: 30px;
+  max-width: 50px;
+  overflow: hidden;
+  /* Align to right for Call side? Left for Put? 
+     Currently simplified to just exist. */
+}
+
+.iv-bar {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.iv-bar-low { background-color: var(--options-iv-low); }
+.iv-bar-mid { background-color: var(--options-iv-mid); }
+.iv-bar-high { background-color: var(--options-iv-high); }
+
+
+/* Volume Heatmap Intensity */
+/* Overrides standard background with intensity-based tint */
+/* CALLS */
+.call-data[data-volume-intensity="1"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 94%); }
+.call-data[data-volume-intensity="2"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 92%); }
+.call-data[data-volume-intensity="3"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 90%); }
+.call-data[data-volume-intensity="4"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 88%); }
+.call-data[data-volume-intensity="5"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 86%); }
+.call-data[data-volume-intensity="6"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 84%); }
+.call-data[data-volume-intensity="7"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 82%); }
+.call-data[data-volume-intensity="8"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 80%); }
+.call-data[data-volume-intensity="9"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 78%); }
+.call-data[data-volume-intensity="10"] { background-color: color-mix(in srgb, var(--options-call-bg), var(--color-surface) 75%); }
+
+/* PUTS */
+.put-data[data-volume-intensity="1"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 94%); }
+.put-data[data-volume-intensity="2"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 92%); }
+.put-data[data-volume-intensity="3"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 90%); }
+.put-data[data-volume-intensity="4"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 88%); }
+.put-data[data-volume-intensity="5"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 86%); }
+.put-data[data-volume-intensity="6"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 84%); }
+.put-data[data-volume-intensity="7"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 82%); }
+.put-data[data-volume-intensity="8"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 80%); }
+.put-data[data-volume-intensity="9"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 78%); }
+.put-data[data-volume-intensity="10"] { background-color: color-mix(in srgb, var(--options-put-bg), var(--color-surface) 75%); }
+
+/* Spread Indicator */
+.spread-indicator {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0.8;
+}
+
+.spread-tight { background-color: var(--color-success); }
+.spread-medium { background-color: var(--color-warning); }
+.spread-wide { background-color: var(--color-danger); }
 
 /* Responsive behavior */
 @media (max-width: 768px) {
   .options-chain-table {
-    font-size: 12px;
+    font-size: 11px;
+    border: none;
+    border-radius: 0;
   }
 
   .options-chain-table th,
   .options-chain-table td {
-    padding: 6px 8px;
+    padding: 4px 6px;
+  }
+  
+  /* Reset sticky offsets on mobile if needed, or keep them */
+  .options-chain-table thead tr:nth-child(1) th {
+     height: auto;
+  }
+  .options-chain-table thead tr:nth-child(2) th {
+     top: 25px; /* Smaller header on mobile */
   }
 }
