@@ -1,0 +1,131 @@
+.strategy-builder {
+  display: grid;
+  gap: 1rem;
+}
+
+.strategy-builder-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.strategy-name {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.strategy-inputs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.strategy-inputs .input {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.strategy-inputs label {
+  color: var(--color-text-secondary);
+}
+
+.legs {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.legs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.add-leg {
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.legs-table {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.legs-row {
+  display: grid;
+  grid-template-columns: 110px 110px 90px 100px 90px;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  align-items: center;
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.legs-row + .legs-row {
+  border-top: 1px solid var(--color-border);
+}
+
+.legs-head {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.legs-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.remove-leg {
+  padding: 0.35rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-danger-light);
+  color: var(--color-danger-hover);
+}
+
+.strategy-greeks {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.greeks-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.greek {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.greek span:first-child {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 980px) {
+  .strategy-inputs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .greeks-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .legs-row {
+    grid-template-columns: 1fr;
+  }
+
+  .legs-actions {
+    justify-content: flex-start;
+  }
+}

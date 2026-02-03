@@ -1,0 +1,116 @@
+.option-calculator {
+  display: grid;
+  gap: 1rem;
+}
+
+.option-calculator-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.option-calculator-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.option-calculator-inputs {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 90px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.input-row label {
+  color: var(--color-text-secondary);
+}
+
+.option-calculator-results {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.result-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.result-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.price {
+  display: grid;
+  gap: 0.1rem;
+  text-align: right;
+}
+
+.price .label {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.greeks {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.greeks-title {
+  font-weight: 600;
+}
+
+.greek-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 90px;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.greek-label {
+  color: var(--color-text-secondary);
+}
+
+.greek-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-border), transparent 40%);
+  overflow: hidden;
+}
+
+.greek-bar-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+}
+
+.greek-value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .option-calculator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .price {
+    text-align: left;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "common": {
+    "appTitle": "期权实验室",
+    "theme": "主题",
+    "language": "语言",
+    "english": "英文",
+    "chinese": "中文"
+  },
+  "options": {
+    "chain": "期权链",
+    "analysis": "分析",
+    "strategies": "策略"
+  }
+}

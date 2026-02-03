@@ -1,0 +1,111 @@
+.time-decay {
+  display: grid;
+  gap: 1rem;
+}
+
+.time-decay-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.moneyness {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.moneyness button {
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.moneyness button.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.time-slider {
+  display: grid;
+  grid-template-columns: 120px 1fr 70px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.time-slider label {
+  color: var(--color-text-secondary);
+}
+
+.time-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-decay-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.metric {
+  padding: 0.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.metric .label {
+  color: var(--color-text-secondary);
+  margin-bottom: 0.2rem;
+}
+
+.metric .value {
+  font-variant-numeric: tabular-nums;
+}
+
+.time-decay-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.chart {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0.6rem;
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.chart-title {
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.line {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 900px) {
+  .time-decay-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .time-slider {
+    grid-template-columns: 1fr;
+  }
+
+  .time-decay-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .time-decay-charts {
+    grid-template-columns: 1fr;
+  }
+}

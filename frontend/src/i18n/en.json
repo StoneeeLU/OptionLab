@@ -1,0 +1,15 @@
+{
+  "common": {
+    "appTitle": "OptionLab",
+    "theme": "Theme",
+    "language": "Language",
+    "english": "English",
+    "chinese": "Chinese",
+    "onlyEnglish": "English Only Content"
+  },
+  "options": {
+    "chain": "Options Chain",
+    "analysis": "Analysis",
+    "strategies": "Strategies"
+  }
+}

@@ -1,0 +1,73 @@
+.chapter-nav {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.chapter-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chapter-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+  color: var(--color-text);
+}
+
+.chapter-link:hover {
+  background: color-mix(in srgb, var(--color-surface-hover), transparent 40%);
+}
+
+.chapter-link.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.chapter-complete {
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+  border: 1px solid color-mix(in srgb, var(--color-success), transparent 60%);
+}
+
+.chapter-nav-select {
+  display: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 720px) {
+  .chapter-nav-links {
+    display: none;
+  }
+
+  .chapter-nav-select {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .chapter-nav-select select {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+  }
+}
