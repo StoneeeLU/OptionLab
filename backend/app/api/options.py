@@ -45,8 +45,8 @@ async def get_option_chain(
         HTTPException 400: Invalid filters
     """
     try:
-        # Get full option chain
-        chain = provider.get_option_chain(symbol)
+        # Get option chain (optionally scoped to a specific expiry)
+        chain = provider.get_option_chain(symbol, expiry)
         
         if not chain.options:
             raise HTTPException(

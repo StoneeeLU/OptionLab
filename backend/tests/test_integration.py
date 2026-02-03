@@ -74,7 +74,7 @@ def client_with_overrides():
     )
 
     class StubProvider:
-        def get_option_chain(self, symbol: str):
+        def get_option_chain(self, symbol: str, expiry: str | None = None):
             if symbol.upper() == "AAPL":
                 return stub_chain
 

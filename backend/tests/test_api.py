@@ -42,7 +42,7 @@ def client_with_overrides():
         def __init__(self, chain: OptionChain):
             self._chain = chain
 
-        def get_option_chain(self, symbol: str):
+        def get_option_chain(self, symbol: str, expiry: str | None = None):
             return self._chain
 
     stub_chain = OptionChain(
