@@ -107,28 +107,58 @@
 }
 
 /* Expiration Tabs */
+.expiration-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.expiry-nav-button {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.expiry-nav-button:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary);
+}
+
+.expiry-nav-button:active {
+  transform: translateY(1px);
+}
+
+.expiry-nav-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
 .expiration-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  flex: 1;
+  min-width: 0;
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge legacy */
 }
 
 .expiration-tabs::-webkit-scrollbar {
-  height: 6px;
-}
-
-.expiration-tabs::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.expiration-tabs::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--color-border) 70%, transparent);
-  border-radius: 999px;
+  display: none; /* Chrome/Safari */
 }
 
 .expiry-tab {
@@ -147,6 +177,16 @@
 .expiry-tab:hover {
   background-color: var(--color-surface-hover);
   border-color: var(--color-primary);
+}
+
+.expiry-tab:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.expiry-tab:disabled:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 .expiry-tab.active {
@@ -202,9 +242,18 @@
 /* Split layout (70/30) */
 .options-split {
   display: grid;
-  grid-template-columns: 7fr 3fr;
+  /* Allow dense tables to overflow/scroll instead of forcing the grid to expand */
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
   gap: 16px;
   align-items: start;
+}
+
+.options-left {
+  min-width: 0;
+}
+
+.options-right {
+  min-width: 0;
 }
 
 .options-right {

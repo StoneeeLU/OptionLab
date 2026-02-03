@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { OptionsChainTable } from '../../components/OptionsChainTable';
 import { OptionAnalysisCard } from '../../components/OptionAnalysisCard';
 import { GlassPanel } from '../../components/common/GlassPanel';
@@ -26,6 +27,7 @@ export function OptionsPage() {
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const lastLoadedSymbolRef = useRef<string>('');
+  const expirationTabsRef = useRef<HTMLDivElement | null>(null);
 
   const handleSymbolSearch = async (searchSymbol: string) => {
     if (!searchSymbol.trim()) return
@@ -62,6 +64,7 @@ export function OptionsPage() {
     if (!symbol) return
     if (!expiry) return
     if (expiry === selectedExpiry) return
+    if (loading) return
 
     const prevExpiry = selectedExpiry
     setSelectedExpiry(expiry)
@@ -83,6 +86,29 @@ export function OptionsPage() {
       setLoading(false)
     }
   }
+
+  const handleAdjacentExpiry = (direction: -1 | 1) => {
+    if (!optionChain) return
+    if (loading) return
+    if (optionChain.expiration_dates.length === 0) return
+
+    const idx = optionChain.expiration_dates.indexOf(selectedExpiry)
+    const current = idx >= 0 ? idx : 0
+    const next = current + direction
+    if (next < 0 || next >= optionChain.expiration_dates.length) return
+
+    void handleExpirySelect(optionChain.expiration_dates[next])
+  }
+
+  // Keep the active expiry visible (even with hidden scrollbars)
+  useEffect(() => {
+    const container = expirationTabsRef.current
+    if (!container) return
+    const active = container.querySelector<HTMLButtonElement>('button.expiry-tab.active')
+    if (!active) return
+    if (typeof active.scrollIntoView !== 'function') return
+    active.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
+  }, [selectedExpiry])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -225,24 +251,53 @@ export function OptionsPage() {
                 )}
               </GlassPanel>
 
-              <div className="expiration-tabs">
-                {hasChain ? (
-                  optionChain.expiration_dates.map((expiry) => (
-                    <button
-                      key={expiry}
-                      className={`expiry-tab ${selectedExpiry === expiry ? 'active' : ''}`}
-                      onClick={() => {
-                        void handleExpirySelect(expiry)
-                      }}
-                    >
-                      {expiry}
-                    </button>
-                  ))
-                ) : (
-                  [1, 2, 3, 4].map((i) => (
-                    <Skeleton key={i} variant="rect" width={80} height={40} style={{ borderRadius: 4 }} />
-                  ))
-                )}
+              <div className="expiration-nav" aria-label="Expiration dates">
+                <button
+                  type="button"
+                  className="expiry-nav-button"
+                  aria-label="Previous expiration"
+                  onClick={() => handleAdjacentExpiry(-1)}
+                  disabled={!hasChain || loading || optionChain.expiration_dates.indexOf(selectedExpiry) <= 0}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                <div className="expiration-tabs" ref={expirationTabsRef}>
+                  {hasChain ? (
+                    optionChain.expiration_dates.map((expiry) => (
+                      <button
+                        key={expiry}
+                        type="button"
+                        className={`expiry-tab ${selectedExpiry === expiry ? 'active' : ''}`}
+                        onClick={() => {
+                          void handleExpirySelect(expiry)
+                        }}
+                        disabled={loading}
+                      >
+                        {expiry}
+                      </button>
+                    ))
+                  ) : (
+                    [1, 2, 3, 4].map((i) => (
+                      <Skeleton key={i} variant="rect" width={80} height={40} style={{ borderRadius: 4 }} />
+                    ))
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="expiry-nav-button"
+                  aria-label="Next expiration"
+                  onClick={() => handleAdjacentExpiry(1)}
+                  disabled={
+                    !hasChain ||
+                    loading ||
+                    optionChain.expiration_dates.indexOf(selectedExpiry) === -1 ||
+                    optionChain.expiration_dates.indexOf(selectedExpiry) >= optionChain.expiration_dates.length - 1
+                  }
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
 
               <GlassPanel className="filters" variant="subtle">
