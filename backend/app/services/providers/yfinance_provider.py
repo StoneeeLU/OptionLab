@@ -1,6 +1,7 @@
 """YFinance data provider implementation."""
 from datetime import date, datetime, timedelta
 from typing import List
+import pandas as pd
 import yfinance as yf
 from app.models.chain import OptionChain
 from app.models.option import Option
@@ -8,6 +9,18 @@ from app.models.option import Option
 
 class YFinanceProvider:
     """Data provider using yfinance library."""
+
+    @staticmethod
+    def _to_float(value):
+        if value is None or pd.isna(value):
+            return None
+        return float(value)
+
+    @staticmethod
+    def _to_int(value):
+        if value is None or pd.isna(value):
+            return None
+        return int(value)
     
     def get_spot_price(self, symbol: str) -> float:
         """Get current spot price from yfinance."""
@@ -69,12 +82,12 @@ class YFinanceProvider:
                 strike=float(row['strike']),
                 expiry=target_expiry,
                 option_type="call",
-                bid=float(row.get('bid', 0)) if row.get('bid') is not None else None,
-                ask=float(row.get('ask', 0)) if row.get('ask') is not None else None,
-                last=float(row.get('lastPrice', 0)) if row.get('lastPrice') is not None else None,
-                volume=int(row.get('volume', 0)) if row.get('volume') is not None else None,
-                open_interest=int(row.get('openInterest', 0)) if row.get('openInterest') is not None else None,
-                implied_volatility=float(row.get('impliedVolatility', 0)) if row.get('impliedVolatility') is not None else None,
+                bid=self._to_float(row.get('bid')),
+                ask=self._to_float(row.get('ask')),
+                last=self._to_float(row.get('lastPrice')),
+                volume=self._to_int(row.get('volume')),
+                open_interest=self._to_int(row.get('openInterest')),
+                implied_volatility=self._to_float(row.get('impliedVolatility')),
                 exercise_style="american"  # US equity options are American
             ))
         
@@ -85,12 +98,12 @@ class YFinanceProvider:
                 strike=float(row['strike']),
                 expiry=target_expiry,
                 option_type="put",
-                bid=float(row.get('bid', 0)) if row.get('bid') is not None else None,
-                ask=float(row.get('ask', 0)) if row.get('ask') is not None else None,
-                last=float(row.get('lastPrice', 0)) if row.get('lastPrice') is not None else None,
-                volume=int(row.get('volume', 0)) if row.get('volume') is not None else None,
-                open_interest=int(row.get('openInterest', 0)) if row.get('openInterest') is not None else None,
-                implied_volatility=float(row.get('impliedVolatility', 0)) if row.get('impliedVolatility') is not None else None,
+                bid=self._to_float(row.get('bid')),
+                ask=self._to_float(row.get('ask')),
+                last=self._to_float(row.get('lastPrice')),
+                volume=self._to_int(row.get('volume')),
+                open_interest=self._to_int(row.get('openInterest')),
+                implied_volatility=self._to_float(row.get('impliedVolatility')),
                 exercise_style="american"
             ))
         
