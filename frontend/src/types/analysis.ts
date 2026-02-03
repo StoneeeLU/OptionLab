@@ -53,4 +53,7 @@ export interface VolatilitySurfaceRequest {
  */
 export interface VolatilitySurfaceResponse {
   surface_data: Array<[number, number, number]>;
+  strikes?: number[];
+  expiries?: string[];
+  days_to_expiry?: number[];
 }

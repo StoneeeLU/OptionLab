@@ -54,6 +54,19 @@ export async function getVolatilitySurface(
 }
 
 /**
+ * Get volatility surface data for a symbol.
+ * Uses the simplified endpoint: GET /api/volatility/surface/{symbol}
+ */
+export async function getVolatilitySurfaceForSymbol(
+  symbol: string
+): Promise<VolatilitySurfaceResponse> {
+  const response = await axios.get<VolatilitySurfaceResponse>(
+    `${BASE_URL}/api/volatility/surface/${encodeURIComponent(symbol)}`
+  );
+  return response.data;
+}
+
+/**
  * Get options chain for a given symbol.
  * 
  * @param symbol - Underlying symbol (e.g., "AAPL")

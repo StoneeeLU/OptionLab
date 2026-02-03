@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import axios from 'axios';
-import { analyzeOption, getVolatilitySurface, getOptionChain } from './api';
+import { analyzeOption, getVolatilitySurface, getVolatilitySurfaceForSymbol, getOptionChain } from './api';
 import type {
   SingleOptionAnalysisRequest,
   OptionAnalysis,
@@ -121,6 +121,9 @@ describe('API Client', () => {
           [150.0, 365, 0.25],
           [155.0, 390, 0.27],
         ],
+        strikes: [150.0, 155.0],
+        expiries: ['2027-01-25', '2027-02-19'],
+        days_to_expiry: [365, 390],
       };
 
       vi.mocked(axios.post).mockResolvedValue({ data: mockResponse });
@@ -144,6 +147,9 @@ describe('API Client', () => {
 
       const mockResponse: VolatilitySurfaceResponse = {
         surface_data: [],
+        strikes: [],
+        expiries: [],
+        days_to_expiry: [],
       };
 
       vi.mocked(axios.post).mockResolvedValue({ data: mockResponse });
@@ -157,6 +163,24 @@ describe('API Client', () => {
       expect(result).toEqual(mockResponse);
     });
   });
+
+  describe('getVolatilitySurfaceForSymbol', () => {
+    it('should fetch volatility surface data by symbol', async () => {
+      const mockResponse: VolatilitySurfaceResponse = {
+        surface_data: [[150.0, 30, 0.25]],
+        strikes: [150.0],
+        expiries: ['2027-01-25'],
+        days_to_expiry: [30],
+      }
+
+      vi.mocked(axios.get).mockResolvedValue({ data: mockResponse })
+
+      const result = await getVolatilitySurfaceForSymbol('AAPL')
+
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:8000/api/volatility/surface/AAPL')
+      expect(result).toEqual(mockResponse)
+    })
+  })
 
   describe('getOptionChain', () => {
     it('should fetch option chain successfully', async () => {
