@@ -2,6 +2,7 @@
 import sys
 from pathlib import Path
 from datetime import date
+import math
 
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
@@ -116,6 +117,52 @@ def test_binomial_pricer_american_option():
     # American put should be worth more than European
     assert price > 0
     assert price < 15
+
+
+def test_binomial_pricer_near_zero_sigma_call_is_stable():
+    """Near-zero sigma should not explode or return NaN (deterministic fallback)."""
+    from app.services.pricing.binomial_tree import BinomialTreePricer
+
+    pricer = BinomialTreePricer()
+
+    S = 150.0
+    K = 150.0
+    T = 1.0
+    r = 0.05
+
+    price = pricer.price(
+        option_type='call',
+        S=S,
+        K=K,
+        T=T,
+        r=r,
+        sigma=1e-4,
+        steps=100,
+    )
+
+    expected = max(S - K * math.exp(-r * T), 0.0)
+    assert math.isfinite(price)
+    assert abs(price - expected) < 1e-9
+
+
+def test_binomial_pricer_near_zero_sigma_put_is_stable():
+    """Near-zero sigma should price American puts close to intrinsic value."""
+    from app.services.pricing.binomial_tree import BinomialTreePricer
+
+    pricer = BinomialTreePricer()
+
+    price = pricer.price(
+        option_type='put',
+        S=100.0,
+        K=110.0,
+        T=1.0,
+        r=0.05,
+        sigma=0.0,
+        steps=100,
+    )
+
+    assert math.isfinite(price)
+    assert abs(price - 10.0) < 1e-9
 
 
 def test_hybrid_pricer_routes_correctly():
