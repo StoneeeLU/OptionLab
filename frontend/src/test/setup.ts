@@ -4,7 +4,9 @@ import { vi } from 'vitest'
 
 vi.mock('echarts', () => {
   class LinearGradient {
-    constructor(..._args: unknown[]) {}
+    constructor(..._args: unknown[]) {
+      void _args
+    }
   }
 
   return {
