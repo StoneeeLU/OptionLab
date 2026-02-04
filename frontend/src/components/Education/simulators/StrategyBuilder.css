@@ -49,12 +49,21 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
+  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease,
+    background var(--transition-fast) ease;
+}
+
+.add-leg:hover {
+  border-color: color-mix(in srgb, var(--color-primary), transparent 35%);
+  background: color-mix(in srgb, var(--color-primary-light), transparent 20%);
+  transform: translateY(-1px);
 }
 
 .legs-table {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .legs-row {
@@ -64,6 +73,11 @@
   padding: 0.6rem;
   align-items: center;
   background: color-mix(in srgb, var(--color-surface), transparent 55%);
+  transition: background var(--transition-fast) ease;
+}
+
+.legs-row:hover {
+  background: color-mix(in srgb, var(--color-primary-light), transparent 35%);
 }
 
 .legs-row + .legs-row {
@@ -86,6 +100,12 @@
   border: 1px solid var(--color-border);
   background: var(--color-danger-light);
   color: var(--color-danger-hover);
+  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease;
+}
+
+.remove-leg:hover {
+  border-color: color-mix(in srgb, var(--color-danger), transparent 35%);
+  transform: translateY(-1px);
 }
 
 .strategy-greeks {
@@ -106,6 +126,15 @@
   border-radius: 12px;
   border: 1px solid var(--color-border);
   background: color-mix(in srgb, var(--color-surface), transparent 55%);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease,
+    border-color var(--transition-fast) ease;
+}
+
+.greek:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-primary), transparent 45%);
 }
 
 .greek span:first-child {

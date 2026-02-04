@@ -6,6 +6,20 @@
     "english": "英文",
     "chinese": "中文"
   },
+  "education": {
+    "sidebar": {
+      "progress": "学习进度",
+      "chapters": "章节",
+      "done": "已完成"
+    },
+    "chapters": {
+      "basics": "基础",
+      "pricing": "定价",
+      "greeks": "希腊值",
+      "iv": "隐含波动率",
+      "strategies": "策略"
+    }
+  },
   "options": {
     "chain": "期权链",
     "analysis": "分析",

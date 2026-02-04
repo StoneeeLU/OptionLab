@@ -1,9 +1,12 @@
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useMemo } from 'react'
+
 import { AnimatedContainer } from '../../components/common/AnimatedContainer'
 import { GlassPanel } from '../../components/common/GlassPanel'
-import { ChapterNav } from '../../components/Education/ChapterNav'
 import { Glossary } from '../../components/Education/Glossary'
 import { AchievementPanel } from '../../components/Education/Achievements'
 import { Quiz } from '../../components/Education/Quiz'
+import { EducationSidebar } from '../../components/Education/Sidebar'
 import { OptionCalculator, StrategyBuilder, TimeDecayDemo } from '../../components/Education/simulators'
 import { BasicsChapter } from '../../components/Education/chapters/BasicsChapter'
 import { PricingChapter } from '../../components/Education/chapters/PricingChapter'
@@ -12,12 +15,26 @@ import { IVChapter } from '../../components/Education/chapters/IVChapter'
 import { StrategiesChapter } from '../../components/Education/chapters/StrategiesChapter'
 import { I18nProvider, useI18n } from '../../i18n/I18nContext'
 import { LanguageToggle } from '../../i18n/LanguageToggle'
-import { useEducationProgress } from '../../hooks/useEducationProgress'
 import './EducationPage.css'
 
 function EducationPageInner() {
   const { language } = useI18n()
-  const { progress } = useEducationProgress()
+  const shouldReduceMotion = useReducedMotion()
+
+  const { scrollYProgress } = useScroll()
+  const heroYBase = useTransform(scrollYProgress, [0, 0.22], [0, -22])
+  const heroY = useSpring(heroYBase, { stiffness: 120, damping: 26, restDelta: 0.001 })
+
+  const sectionMotionProps = useMemo(() => {
+    if (shouldReduceMotion) return {}
+    if (typeof IntersectionObserver === 'undefined') return {}
+    return {
+      initial: { opacity: 0, y: 18 },
+      whileInView: { opacity: 1, y: 0 },
+      viewport: { once: true, amount: 0.22 },
+      transition: { duration: 0.45, ease: 'easeOut' },
+    } as const
+  }, [shouldReduceMotion])
 
   const title = language === 'zh' ? '期权科普' : 'Options Education'
   const subtitle =
@@ -25,14 +42,13 @@ function EducationPageInner() {
       ? '面向新手的交互式期权入门：概念、Greeks、波动率与策略。'
       : 'An interactive introduction: concepts, Greeks, volatility, and strategies.'
 
-  const totalChapters = 5
-  const completedCount = Math.min(progress.completedChapters.length, totalChapters)
-  const percent = Math.round((completedCount / totalChapters) * 100)
-
   return (
     <div className="education-page">
       <AnimatedContainer animation="slideUp">
         <GlassPanel className="education-hero" variant="subtle">
+          {!shouldReduceMotion && (
+            <motion.div className="education-hero-decor" aria-hidden="true" style={{ y: heroY }} />
+          )}
           <div className="education-hero-header">
             <div className="education-hero-text">
               <h1>{title}</h1>
@@ -43,56 +59,70 @@ function EducationPageInner() {
         </GlassPanel>
       </AnimatedContainer>
 
-      <AnimatedContainer animation="fadeIn">
-        <GlassPanel className="education-nav" variant="subtle">
-          <div className="education-progress" data-testid="education-progress">
-            <div className="education-progress-label">
-              {language === 'zh' ? '学习进度' : 'Progress'}: {completedCount}/{totalChapters}
-            </div>
-            <div className="education-progress-bar" aria-label="Progress">
-              <div className="education-progress-fill" style={{ width: `${percent}%` }} />
-            </div>
+      <div className="education-layout" data-testid="education-layout">
+        <AnimatedContainer animation="fadeIn">
+          <EducationSidebar />
+        </AnimatedContainer>
+
+        <div className="education-main">
+          <AnimatedContainer animation="fadeIn">
+            <AchievementPanel />
+          </AnimatedContainer>
+
+          <div className="education-sections">
+            <motion.section
+              id="basics"
+              className="education-section"
+              data-testid="section-basics"
+              {...sectionMotionProps}
+            >
+              <BasicsChapter />
+              <Quiz chapterId="basics" />
+            </motion.section>
+
+            <motion.section
+              id="pricing"
+              className="education-section"
+              data-testid="section-pricing"
+              {...sectionMotionProps}
+            >
+              <PricingChapter />
+              <OptionCalculator />
+              <TimeDecayDemo />
+              <Quiz chapterId="pricing" />
+            </motion.section>
+
+            <motion.section
+              id="greeks"
+              className="education-section"
+              data-testid="section-greeks"
+              {...sectionMotionProps}
+            >
+              <GreeksChapter />
+              <Quiz chapterId="greeks" />
+            </motion.section>
+
+            <motion.section id="iv" className="education-section" data-testid="section-iv" {...sectionMotionProps}>
+              <IVChapter />
+              <Quiz chapterId="iv" />
+            </motion.section>
+
+            <motion.section
+              id="strategies"
+              className="education-section"
+              data-testid="section-strategies"
+              {...sectionMotionProps}
+            >
+              <StrategiesChapter />
+              <StrategyBuilder />
+              <Quiz chapterId="strategies" />
+            </motion.section>
+
+            <motion.section className="education-section" data-testid="section-glossary" {...sectionMotionProps}>
+              <Glossary />
+            </motion.section>
           </div>
-          <ChapterNav />
-        </GlassPanel>
-      </AnimatedContainer>
-
-      <AnimatedContainer animation="fadeIn">
-        <AchievementPanel />
-      </AnimatedContainer>
-
-      <div className="education-sections">
-        <section id="basics" className="education-section" data-testid="section-basics">
-          <BasicsChapter />
-          <Quiz chapterId="basics" />
-        </section>
-
-        <section id="pricing" className="education-section" data-testid="section-pricing">
-          <PricingChapter />
-          <OptionCalculator />
-          <TimeDecayDemo />
-          <Quiz chapterId="pricing" />
-        </section>
-
-        <section id="greeks" className="education-section" data-testid="section-greeks">
-          <GreeksChapter />
-          <Quiz chapterId="greeks" />
-        </section>
-
-        <section id="iv" className="education-section" data-testid="section-iv">
-          <IVChapter />
-          <Quiz chapterId="iv" />
-        </section>
-
-        <section id="strategies" className="education-section" data-testid="section-strategies">
-          <StrategiesChapter />
-          <StrategyBuilder />
-          <Quiz chapterId="strategies" />
-        </section>
-
-        <section className="education-section" data-testid="section-glossary">
-          <Glossary />
-        </section>
+        </div>
       </div>
     </div>
   )

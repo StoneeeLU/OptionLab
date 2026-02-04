@@ -5,8 +5,38 @@
   padding: 24px;
 }
 
+.education-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.education-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .education-hero {
   padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.education-hero-decor {
+  position: absolute;
+  inset: -40px;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(120px 120px at 15% 35%, color-mix(in srgb, var(--color-primary), transparent 60%) 0%, transparent 70%),
+    radial-gradient(160px 160px at 80% 20%, color-mix(in srgb, var(--color-success), transparent 65%) 0%, transparent 68%),
+    radial-gradient(220px 220px at 70% 85%, color-mix(in srgb, var(--color-warning), transparent 75%) 0%, transparent 65%);
+  filter: blur(10px) saturate(1.25);
+  opacity: 0.9;
+  transform: translateZ(0);
 }
 
 .education-hero-header {
@@ -15,6 +45,8 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
 .education-hero-text h1 {
@@ -26,52 +58,7 @@
   color: var(--color-text-secondary);
 }
 
-.education-nav {
-  position: sticky;
-  top: 16px;
-  z-index: 5;
-  padding: 12px 16px;
-}
 
-.education-progress {
-  display: grid;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.education-progress-label {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-}
-
-.education-progress-bar {
-  width: 100%;
-  height: 10px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-border), transparent 40%);
-  overflow: hidden;
-}
-
-.education-progress-fill {
-  height: 100%;
-  background: var(--gradient-primary);
-}
-
-.education-nav-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.education-nav-links a {
-  text-decoration: none;
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-.education-nav-links a:hover {
-  color: var(--color-primary);
-}
 
 .education-sections {
   display: flex;
@@ -203,8 +190,8 @@
     padding: 20px;
   }
 
-  .education-nav {
-    top: 12px;
+  .education-layout {
+    flex-direction: column;
   }
 
   .education-chapter-footer {

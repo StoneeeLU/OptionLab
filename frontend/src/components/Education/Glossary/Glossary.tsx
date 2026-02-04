@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { useI18n } from '../../../i18n/I18nContext'
 import './Glossary.css'
@@ -55,6 +56,7 @@ function normalize(text: string): string {
 
 export function Glossary() {
   const { language } = useI18n()
+  const shouldReduceMotion = useReducedMotion()
   const [query, setQuery] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
@@ -101,7 +103,7 @@ export function Glossary() {
           const expanded = expandedId === term.id
 
           return (
-            <div key={term.id} className="glossary-card" role="listitem">
+            <motion.div key={term.id} className="glossary-card" role="listitem" layout>
               <div className="glossary-card-top">
                 <div className="glossary-term">
                   <strong>{title}</strong>
@@ -121,16 +123,22 @@ export function Glossary() {
 
               <p className="glossary-short">{short}</p>
 
-              {expanded && (
-                <div
-                  className="glossary-detail"
-                  id={`glossary-detail-${term.id}`}
-                  data-testid={`glossary-detail-${term.id}`}
-                >
-                  <p>{long}</p>
-                </div>
-              )}
-            </div>
+              <AnimatePresence initial={false}>
+                {expanded && (
+                  <motion.div
+                    className="glossary-detail"
+                    id={`glossary-detail-${term.id}`}
+                    data-testid={`glossary-detail-${term.id}`}
+                    initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
+                    animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, height: 'auto' }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                    transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.22, ease: 'easeOut' }}
+                  >
+                    <p>{long}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           )
         })}
 

@@ -7,6 +7,20 @@
     "chinese": "Chinese",
     "onlyEnglish": "English Only Content"
   },
+  "education": {
+    "sidebar": {
+      "progress": "Progress",
+      "chapters": "Chapters",
+      "done": "Done"
+    },
+    "chapters": {
+      "basics": "Basics",
+      "pricing": "Pricing",
+      "greeks": "Greeks",
+      "iv": "IV",
+      "strategies": "Strategies"
+    }
+  },
   "options": {
     "chain": "Options Chain",
     "analysis": "Analysis",

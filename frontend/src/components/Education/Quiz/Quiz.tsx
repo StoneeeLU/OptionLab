@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { GlassPanel } from '../../common/GlassPanel'
 import { useI18n } from '../../../i18n/I18nContext'
@@ -228,6 +229,7 @@ export type QuizProps = {
 
 export function Quiz({ chapterId }: QuizProps) {
   const { language } = useI18n()
+  const shouldReduceMotion = useReducedMotion()
   const { progress, updateQuizScore, unlockAchievement } = useEducationProgress()
 
   const questions = QUESTIONS[chapterId]
@@ -288,9 +290,19 @@ export function Quiz({ chapterId }: QuizProps) {
       </header>
 
       <div className="quiz-body">
-        <div className="quiz-question" data-testid="quiz-question">
-          {language === 'zh' ? current.prompt.zh : current.prompt.en}
-        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={current.id}
+            className="quiz-question"
+            data-testid="quiz-question"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.22, ease: 'easeOut' }}
+          >
+            {language === 'zh' ? current.prompt.zh : current.prompt.en}
+          </motion.div>
+        </AnimatePresence>
 
         <div className="quiz-choices" role="list">
           {current.choices.map((c, i) => {
@@ -313,39 +325,48 @@ export function Quiz({ chapterId }: QuizProps) {
           })}
         </div>
 
-        {answered && (
-          <div className="quiz-feedback" data-testid="quiz-feedback">
-            <div className="quiz-feedback-title">
-              {lastChoice === current.correctIndex
-                ? language === 'zh'
-                  ? '回答正确'
-                  : 'Correct'
-                : language === 'zh'
-                  ? '回答错误'
-                  : 'Incorrect'}
-            </div>
-            <div className="quiz-feedback-text">
-              {language === 'zh' ? current.explanation.zh : current.explanation.en}
-            </div>
-            <div className="quiz-actions">
-              {index < questions.length - 1 ? (
-                <button type="button" data-testid="quiz-next" className="quiz-next" onClick={next}>
-                  {language === 'zh' ? '下一题' : 'Next'}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  data-testid="quiz-finish"
-                  className="quiz-next"
-                  onClick={finalize}
-                  disabled={!completed}
-                >
-                  {language === 'zh' ? '完成并保存' : 'Finish & Save'}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
+        <AnimatePresence initial={false}>
+          {answered && (
+            <motion.div
+              className="quiz-feedback"
+              data-testid="quiz-feedback"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
+            >
+              <div className="quiz-feedback-title">
+                {lastChoice === current.correctIndex
+                  ? language === 'zh'
+                    ? '回答正确'
+                    : 'Correct'
+                  : language === 'zh'
+                    ? '回答错误'
+                    : 'Incorrect'}
+              </div>
+              <div className="quiz-feedback-text">
+                {language === 'zh' ? current.explanation.zh : current.explanation.en}
+              </div>
+              <div className="quiz-actions">
+                {index < questions.length - 1 ? (
+                  <button type="button" data-testid="quiz-next" className="quiz-next" onClick={next}>
+                    {language === 'zh' ? '下一题' : 'Next'}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    data-testid="quiz-finish"
+                    className="quiz-next"
+                    onClick={finalize}
+                    disabled={!completed}
+                  >
+                    {language === 'zh' ? '完成并保存' : 'Finish & Save'}
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </GlassPanel>
   )

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { I18nProvider } from '../../../i18n/I18nContext'
 import { Glossary } from './Glossary'
@@ -23,7 +23,7 @@ describe('Glossary', () => {
     expect(screen.getByTestId('glossary-toggle-delta')).toBeInTheDocument()
   })
 
-  it('expands and collapses a term', () => {
+  it('expands and collapses a term', async () => {
     render(
       <I18nProvider>
         <Glossary />
@@ -35,6 +35,8 @@ describe('Glossary', () => {
     expect(screen.getByTestId('glossary-detail-delta')).toBeInTheDocument()
 
     fireEvent.click(toggle)
-    expect(screen.queryByTestId('glossary-detail-delta')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByTestId('glossary-detail-delta')).not.toBeInTheDocument()
+    })
   })
 })

@@ -33,6 +33,15 @@
   border-radius: 12px;
   padding: 0.9rem;
   background: color-mix(in srgb, var(--color-surface), transparent 55%);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease,
+    border-color var(--transition-fast) ease;
+}
+
+.glossary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
 }
 
 .glossary-card-top {
@@ -58,6 +67,14 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
+  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease,
+    background var(--transition-fast) ease;
+}
+
+.glossary-toggle:hover {
+  border-color: color-mix(in srgb, var(--color-primary), transparent 35%);
+  background: color-mix(in srgb, var(--color-primary-light), transparent 25%);
+  transform: translateY(-1px);
 }
 
 .glossary-short {
@@ -70,6 +87,7 @@
   border-top: 1px solid var(--color-border);
   padding-top: 0.6rem;
   color: var(--color-text);
+  overflow: hidden;
 }
 
 .glossary-empty {

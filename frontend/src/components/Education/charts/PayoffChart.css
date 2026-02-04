@@ -17,4 +17,8 @@
 .payoff-chart-canvas {
   width: 100%;
   height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-border), transparent 25%);
+  background: color-mix(in srgb, var(--color-surface), transparent 45%);
 }
