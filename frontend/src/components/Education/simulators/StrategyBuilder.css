@@ -24,13 +24,20 @@
   gap: 0.75rem;
 }
 
-.strategy-inputs .input {
-  display: grid;
-  gap: 0.25rem;
+.strategy-inputs .input input {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+  transition: border-color var(--transition-fast) ease;
 }
 
-.strategy-inputs label {
-  color: var(--color-text-secondary);
+.strategy-inputs .input input:focus {
+  border-color: var(--color-primary);
+  outline: none;
 }
 
 .legs {
@@ -75,6 +82,24 @@
   align-items: center;
   background: color-mix(in srgb, var(--color-surface), transparent 55%);
   transition: background var(--transition-fast) ease;
+}
+
+.legs-row select,
+.legs-row input {
+  width: 100%;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  transition: border-color var(--transition-fast) ease;
+}
+
+.legs-row select:focus,
+.legs-row input:focus {
+  border-color: var(--color-primary);
+  outline: none;
 }
 
 .legs-row:hover {

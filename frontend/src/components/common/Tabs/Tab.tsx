@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useTabs } from './Tabs'
+import { useTabs } from './TabsContext'
 
 interface TabProps {
   id: string

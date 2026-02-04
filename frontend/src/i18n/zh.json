@@ -10,7 +10,9 @@
     "sidebar": {
       "progress": "学习进度",
       "chapters": "章节",
-      "done": "已完成"
+      "done": "已完成",
+      "toggle": "切换教育菜单",
+      "completion": "完成度"
     },
     "chapters": {
       "basics": "基础",

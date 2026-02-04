@@ -1,27 +1,11 @@
 import type { ReactNode } from 'react'
 import {
-  createContext,
-  useContext,
   useEffect,
   useState,
   useCallback,
 } from 'react'
+import { TabsContext } from './TabsContext'
 import './Tabs.css'
-
-interface TabsContextType {
-  activeTab: string
-  setActiveTab: (id: string) => void
-}
-
-const TabsContext = createContext<TabsContextType | undefined>(undefined)
-
-export function useTabs() {
-  const context = useContext(TabsContext)
-  if (!context) {
-    throw new Error('useTabs must be used within a Tabs provider')
-  }
-  return context
-}
 
 interface TabsProps {
   children: ReactNode

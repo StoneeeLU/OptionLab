@@ -29,3 +29,10 @@ if (!('createObjectURL' in URL)) {
   // @ts-expect-error - jsdom doesn't implement createObjectURL
   URL.createObjectURL = vi.fn(() => 'mock-url')
 }
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}

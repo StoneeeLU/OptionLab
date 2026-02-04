@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 
 import { calculateCallPrice, calculateGreeks, calculatePutPrice } from '../../../utils/blackScholes'
 import { GlassPanel } from '../../common/GlassPanel'
 import { useI18n } from '../../../i18n/I18nContext'
+import { fadeIn, slideUp, stagger } from '../../../lib/animations'
 import './OptionCalculator.css'
 
 type Inputs = {
@@ -29,6 +31,7 @@ function formatPrice(value: number): string {
 
 export function OptionCalculator() {
   const { language } = useI18n()
+  const shouldReduceMotion = useReducedMotion()
 
   const [inputs, setInputs] = useState<Inputs>({
     spot: 100,
@@ -94,8 +97,14 @@ export function OptionCalculator() {
       </header>
 
       <div className="option-calculator-grid">
-        <div className="option-calculator-inputs" aria-label="Inputs">
-          <div className="input-row">
+        <motion.div
+          className="option-calculator-inputs"
+          aria-label="Inputs"
+          variants={stagger}
+          initial={shouldReduceMotion ? 'show' : 'hidden'}
+          animate="show"
+        >
+          <motion.div className="input-row" variants={shouldReduceMotion ? undefined : slideUp}>
             <label htmlFor="spot">{labels.spot}</label>
             <input
               id="spot"
@@ -116,9 +125,9 @@ export function OptionCalculator() {
               value={inputs.spot}
               onChange={(e) => setField('spot', clamp(Number(e.target.value), 0, 200))}
             />
-          </div>
+          </motion.div>
 
-          <div className="input-row">
+          <motion.div className="input-row" variants={shouldReduceMotion ? undefined : slideUp}>
             <label htmlFor="strike">{labels.strike}</label>
             <input
               id="strike"
@@ -139,9 +148,9 @@ export function OptionCalculator() {
               value={inputs.strike}
               onChange={(e) => setField('strike', clamp(Number(e.target.value), 0, 200))}
             />
-          </div>
+          </motion.div>
 
-          <div className="input-row">
+          <motion.div className="input-row" variants={shouldReduceMotion ? undefined : slideUp}>
             <label htmlFor="rate">{labels.rate}</label>
             <input
               id="rate"
@@ -162,9 +171,9 @@ export function OptionCalculator() {
               value={inputs.rate}
               onChange={(e) => setField('rate', clamp(Number(e.target.value), 0, 0.2))}
             />
-          </div>
+          </motion.div>
 
-          <div className="input-row">
+          <motion.div className="input-row" variants={shouldReduceMotion ? undefined : slideUp}>
             <label htmlFor="vol">{labels.volatility}</label>
             <input
               id="vol"
@@ -185,9 +194,9 @@ export function OptionCalculator() {
               value={inputs.volatility}
               onChange={(e) => setField('volatility', clamp(Number(e.target.value), 0, 2))}
             />
-          </div>
+          </motion.div>
 
-          <div className="input-row">
+          <motion.div className="input-row" variants={shouldReduceMotion ? undefined : slideUp}>
             <label htmlFor="time">{labels.time}</label>
             <input
               id="time"
@@ -208,11 +217,17 @@ export function OptionCalculator() {
               value={inputs.time}
               onChange={(e) => setField('time', clamp(Number(e.target.value), 0, 2))}
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         <div className="option-calculator-results" aria-label="Results">
-          <div className="result-card" data-testid="call-results">
+          <motion.div
+            className="result-card"
+            data-testid="call-results"
+            variants={fadeIn}
+            initial={shouldReduceMotion ? 'show' : 'hidden'}
+            animate="show"
+          >
             <div className="result-header">
               <h4>{labels.call}</h4>
               <div className="price">
@@ -230,16 +245,28 @@ export function OptionCalculator() {
                   <div key={row.id} className="greek-row" data-testid={`call-greek-${row.id}`}>
                     <div className="greek-label">{row.label}</div>
                     <div className="greek-bar" aria-hidden="true">
-                      <div className="greek-bar-fill" style={{ width: `${magnitude * 100}%` }} />
+                      <motion.div
+                        className="greek-bar-fill"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${magnitude * 100}%` }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                      />
                     </div>
                     <div className="greek-value">{formatNumber(value, row.digits)}</div>
                   </div>
                 )
               })}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="result-card" data-testid="put-results">
+          <motion.div
+            className="result-card"
+            data-testid="put-results"
+            variants={fadeIn}
+            initial={shouldReduceMotion ? 'show' : 'hidden'}
+            animate="show"
+            transition={{ delay: shouldReduceMotion ? 0 : 0.1 }}
+          >
             <div className="result-header">
               <h4>{labels.put}</h4>
               <div className="price">
@@ -257,14 +284,19 @@ export function OptionCalculator() {
                   <div key={row.id} className="greek-row" data-testid={`put-greek-${row.id}`}>
                     <div className="greek-label">{row.label}</div>
                     <div className="greek-bar" aria-hidden="true">
-                      <div className="greek-bar-fill" style={{ width: `${magnitude * 100}%` }} />
+                      <motion.div
+                        className="greek-bar-fill"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${magnitude * 100}%` }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                      />
                     </div>
                     <div className="greek-value">{formatNumber(value, row.digits)}</div>
                   </div>
                 )
               })}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </GlassPanel>

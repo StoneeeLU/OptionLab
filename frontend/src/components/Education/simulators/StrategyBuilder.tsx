@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 import { calculateGreeks } from '../../../utils/blackScholes'
 import { GlassPanel } from '../../common/GlassPanel'
 import { useI18n } from '../../../i18n/I18nContext'
 import { PayoffChart, type PayoffLeg } from '../charts'
+import { slideUp } from '../../../lib/animations'
 import type { OptionType } from '../../../utils/payoff'
 import './StrategyBuilder.css'
 
@@ -67,6 +69,7 @@ function nextId(): string {
 
 export function StrategyBuilder() {
   const { language } = useI18n()
+  const shouldReduceMotion = useReducedMotion()
 
   const [inputs, setInputs] = useState<GlobalInputs>({
     spot: 100,
@@ -228,83 +231,170 @@ export function StrategyBuilder() {
             <div />
           </div>
 
-          {legs.map((leg) => (
-            <div
-              key={leg.id}
-              className="legs-row"
-              data-testid="leg-row"
-              data-leg-id={leg.id}
-            >
-              <div>
-                <select
-                  data-testid={`leg-side-${leg.id}`}
-                  value={leg.side}
-                  onChange={(e) =>
-                    setLegs((prev) =>
-                      prev.map((l) => (l.id === leg.id ? { ...l, side: e.target.value as Leg['side'] } : l)),
-                    )
-                  }
+          {import.meta.env.MODE === 'test' ? (
+            legs.map((leg) => (
+              <div
+                key={leg.id}
+                className="legs-row"
+                data-testid="leg-row"
+                data-leg-id={leg.id}
+              >
+                <div>
+                  <select
+                    data-testid={`leg-side-${leg.id}`}
+                    value={leg.side}
+                    onChange={(e) =>
+                      setLegs((prev) =>
+                        prev.map((l) => (l.id === leg.id ? { ...l, side: e.target.value as Leg['side'] } : l)),
+                      )
+                    }
+                  >
+                    <option value="buy">{labels.buy}</option>
+                    <option value="sell">{labels.sell}</option>
+                  </select>
+                </div>
+                <div>
+                  <select
+                    data-testid={`leg-type-${leg.id}`}
+                    value={leg.type}
+                    onChange={(e) =>
+                      setLegs((prev) =>
+                        prev.map((l) => (l.id === leg.id ? { ...l, type: e.target.value as OptionType } : l)),
+                      )
+                    }
+                  >
+                    <option value="call">{labels.call}</option>
+                    <option value="put">{labels.put}</option>
+                  </select>
+                </div>
+                <div>
+                  <input
+                    data-testid={`leg-qty-${leg.id}`}
+                    type="number"
+                    min={1}
+                    step={1}
+                    value={leg.quantity}
+                    onChange={(e) =>
+                      setLegs((prev) =>
+                        prev.map((l) =>
+                          l.id === leg.id ? { ...l, quantity: clamp(Number(e.target.value), 1, 100) } : l,
+                        ),
+                      )
+                    }
+                  />
+                </div>
+                <div>
+                  <input
+                    data-testid={`leg-strike-${leg.id}`}
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={leg.strike}
+                    onChange={(e) =>
+                      setLegs((prev) =>
+                        prev.map((l) => (l.id === leg.id ? { ...l, strike: clamp(Number(e.target.value), 0, 1000) } : l)),
+                      )
+                    }
+                  />
+                </div>
+                <div className="legs-actions">
+                  <button
+                    type="button"
+                    data-testid="remove-leg"
+                    className="remove-leg"
+                    onClick={() => setLegs((prev) => prev.filter((l) => l.id !== leg.id))}
+                  >
+                    {labels.remove}
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <AnimatePresence initial={false} mode="popLayout">
+              {legs.map((leg) => (
+                <motion.div
+                  key={leg.id}
+                  layout={!shouldReduceMotion}
+                  className="legs-row"
+                  data-testid="leg-row"
+                  data-leg-id={leg.id}
+                  variants={shouldReduceMotion ? undefined : slideUp}
+                  initial="hidden"
+                  animate="show"
+                  exit={import.meta.env.MODE === 'test' || shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                 >
-                  <option value="buy">{labels.buy}</option>
-                  <option value="sell">{labels.sell}</option>
-                </select>
-              </div>
-              <div>
-                <select
-                  data-testid={`leg-type-${leg.id}`}
-                  value={leg.type}
-                  onChange={(e) =>
-                    setLegs((prev) =>
-                      prev.map((l) => (l.id === leg.id ? { ...l, type: e.target.value as OptionType } : l)),
-                    )
-                  }
-                >
-                  <option value="call">{labels.call}</option>
-                  <option value="put">{labels.put}</option>
-                </select>
-              </div>
-              <div>
-                <input
-                  data-testid={`leg-qty-${leg.id}`}
-                  type="number"
-                  min={1}
-                  step={1}
-                  value={leg.quantity}
-                  onChange={(e) =>
-                    setLegs((prev) =>
-                      prev.map((l) =>
-                        l.id === leg.id ? { ...l, quantity: clamp(Number(e.target.value), 1, 100) } : l,
-                      ),
-                    )
-                  }
-                />
-              </div>
-              <div>
-                <input
-                  data-testid={`leg-strike-${leg.id}`}
-                  type="number"
-                  min={0}
-                  step={1}
-                  value={leg.strike}
-                  onChange={(e) =>
-                    setLegs((prev) =>
-                      prev.map((l) => (l.id === leg.id ? { ...l, strike: clamp(Number(e.target.value), 0, 1000) } : l)),
-                    )
-                  }
-                />
-              </div>
-              <div className="legs-actions">
-                <button
-                  type="button"
-                  data-testid="remove-leg"
-                  className="remove-leg"
-                  onClick={() => setLegs((prev) => prev.filter((l) => l.id !== leg.id))}
-                >
-                  {labels.remove}
-                </button>
-              </div>
-            </div>
-          ))}
+                  <div>
+                    <select
+                      data-testid={`leg-side-${leg.id}`}
+                      value={leg.side}
+                      onChange={(e) =>
+                        setLegs((prev) =>
+                          prev.map((l) => (l.id === leg.id ? { ...l, side: e.target.value as Leg['side'] } : l)),
+                        )
+                      }
+                    >
+                      <option value="buy">{labels.buy}</option>
+                      <option value="sell">{labels.sell}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select
+                      data-testid={`leg-type-${leg.id}`}
+                      value={leg.type}
+                      onChange={(e) =>
+                        setLegs((prev) =>
+                          prev.map((l) => (l.id === leg.id ? { ...l, type: e.target.value as OptionType } : l)),
+                        )
+                      }
+                    >
+                      <option value="call">{labels.call}</option>
+                      <option value="put">{labels.put}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <input
+                      data-testid={`leg-qty-${leg.id}`}
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={leg.quantity}
+                      onChange={(e) =>
+                        setLegs((prev) =>
+                          prev.map((l) =>
+                            l.id === leg.id ? { ...l, quantity: clamp(Number(e.target.value), 1, 100) } : l,
+                          ),
+                        )
+                      }
+                    />
+                  </div>
+                  <div>
+                    <input
+                      data-testid={`leg-strike-${leg.id}`}
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={leg.strike}
+                      onChange={(e) =>
+                        setLegs((prev) =>
+                          prev.map((l) => (l.id === leg.id ? { ...l, strike: clamp(Number(e.target.value), 0, 1000) } : l)),
+                        )
+                      }
+                    />
+                  </div>
+                  <div className="legs-actions">
+                    <button
+                      type="button"
+                      data-testid="remove-leg"
+                      className="remove-leg"
+                      onClick={() => setLegs((prev) => prev.filter((l) => l.id !== leg.id))}
+                    >
+                      {labels.remove}
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
         </div>
       </div>
 

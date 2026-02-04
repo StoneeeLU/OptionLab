@@ -10,6 +10,7 @@
 }
 
 .chapter-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -18,6 +19,9 @@
   border-radius: 999px;
   background: color-mix(in srgb, var(--color-surface), transparent 55%);
   color: var(--color-text);
+  text-decoration: none;
+  isolation: isolate; /* Create stacking context */
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .chapter-link:hover {
@@ -26,17 +30,36 @@
 
 .chapter-link.active {
   border-color: var(--color-primary);
+  background: transparent; /* Handled by motion div */
+  color: var(--color-primary-dark);
+}
+
+.chapter-link-bg {
+  position: absolute;
+  inset: 0;
   background: var(--color-primary-light);
+  border-radius: 999px;
+  z-index: -1;
+}
+
+.chapter-link-label {
+  z-index: 1;
+  font-weight: 500;
 }
 
 .chapter-complete {
-  font-size: 0.75rem;
-  line-height: 1;
-  padding: 0.2rem 0.45rem;
-  border-radius: 999px;
-  background: var(--color-success-light);
-  color: var(--color-success-hover);
-  border: 1px solid color-mix(in srgb, var(--color-success), transparent 60%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+}
+
+.chapter-complete img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .chapter-nav-select {
@@ -69,5 +92,13 @@
     width: 100%;
     padding: 0.55rem 0.75rem;
     border-radius: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-link,
+  .chapter-link-bg {
+    transition: none !important;
+    animation: none !important;
   }
 }

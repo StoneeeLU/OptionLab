@@ -11,7 +11,9 @@
     "sidebar": {
       "progress": "Progress",
       "chapters": "Chapters",
-      "done": "Done"
+      "done": "Done",
+      "toggle": "Toggle Education Menu",
+      "completion": "Completion"
     },
     "chapters": {
       "basics": "Basics",

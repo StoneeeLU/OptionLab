@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import { calculateCallPrice, calculateGreeks } from '../../../utils/blackScholes'
 import { GlassPanel } from '../../common/GlassPanel'
@@ -27,8 +28,10 @@ function formatPrice(value: number): string {
   return value.toFixed(2)
 }
 
-function toPolyline(points: Array<[number, number]>): string {
-  return points.map(([x, y]) => `${x},${y}`).join(' ')
+function toPath(points: Array<[number, number]>): string {
+  if (points.length === 0) return ''
+  const [first, ...rest] = points
+  return `M ${first[0]},${first[1]} ` + rest.map(([x, y]) => `L ${x},${y}`).join(' ')
 }
 
 function scaleSeries(values: number[], width: number, height: number): Array<[number, number]> {
@@ -99,8 +102,8 @@ export function TimeDecayDemo() {
 
   const width = 320
   const height = 120
-  const priceLine = toPolyline(scaleSeries(curves.prices, width, height))
-  const thetaLine = toPolyline(scaleSeries(curves.thetas, width, height))
+  const priceLine = toPath(scaleSeries(curves.prices, width, height))
+  const thetaLine = toPath(scaleSeries(curves.thetas, width, height))
 
   return (
     <GlassPanel variant="subtle" className="time-decay" data-testid="time-decay-demo">
@@ -160,29 +163,92 @@ export function TimeDecayDemo() {
       <div className="time-decay-metrics">
         <div className="metric">
           <div className="label">{labels.price}</div>
-          <div className="value" data-testid="time-decay-price">{formatPrice(price)}</div>
+          <div data-testid="time-decay-price">
+            {import.meta.env.MODE === 'test' ? (
+              <div className="value">{formatPrice(price)}</div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={price}
+                  className="value"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {formatPrice(price)}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
         </div>
         <div className="metric">
           <div className="label">{labels.theta}</div>
-          <div className="value" data-testid="time-decay-theta">{formatNumber(theta, 4)}</div>
+          <div data-testid="time-decay-theta">
+            {import.meta.env.MODE === 'test' ? (
+              <div className="value">{formatNumber(theta, 4)}</div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={theta}
+                  className="value"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {formatNumber(theta, 4)}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
         </div>
         <div className="metric">
           <div className="label">K</div>
-          <div className="value" data-testid="time-decay-strike">{formatNumber(strike, 2)}</div>
+          <div data-testid="time-decay-strike">
+            {import.meta.env.MODE === 'test' ? (
+              <div className="value">{formatNumber(strike, 2)}</div>
+            ) : (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={strike}
+                  className="value"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {formatNumber(strike, 2)}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
         </div>
       </div>
 
       <div className="time-decay-charts" aria-label="Curves">
         <div className="chart" data-testid="price-curve">
           <div className="chart-title">{labels.price}</div>
-          <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-            <polyline className="line" points={priceLine} />
+          <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+            <motion.path
+              className="line"
+              d={priceLine}
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            />
           </svg>
         </div>
         <div className="chart" data-testid="theta-curve">
           <div className="chart-title">{labels.theta}</div>
-          <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-            <polyline className="line" points={thetaLine} />
+          <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
+            <motion.path
+              className="line"
+              d={thetaLine}
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            />
           </svg>
         </div>
       </div>

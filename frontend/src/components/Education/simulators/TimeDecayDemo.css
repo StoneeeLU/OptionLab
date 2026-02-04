@@ -53,6 +53,38 @@
   font-variant-numeric: tabular-nums;
 }
 
+.time-slider input[type='range'] {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 4px;
+  width: 100%;
+}
+
+.time-slider input[type='range']::-webkit-slider-runnable-track {
+  background: var(--color-border);
+  height: 4px;
+  border-radius: 999px;
+}
+
+.time-slider input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  margin-top: -6px;
+  background: var(--color-primary);
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast) ease;
+}
+
+.time-slider input[type='range']:focus::-webkit-slider-thumb,
+.time-slider input[type='range']:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
+  background: var(--color-primary-light);
+}
+
 .time-decay-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -101,6 +133,7 @@
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 @media (max-width: 900px) {

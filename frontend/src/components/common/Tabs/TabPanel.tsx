@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useTabs } from './Tabs'
+import { useTabs } from './TabsContext'
 import { motion } from 'framer-motion'
 
 interface TabPanelProps {

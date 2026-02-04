@@ -103,11 +103,22 @@ export function Glossary() {
           const expanded = expandedId === term.id
 
           return (
-            <motion.div key={term.id} className="glossary-card" role="listitem" layout>
+            <motion.div
+              key={term.id}
+              className="glossary-card"
+              role="listitem"
+              layout
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              whileHover={shouldReduceMotion ? {} : { y: -4, boxShadow: 'var(--shadow-md)' }}
+              transition={{ layout: { duration: 0.3, ease: 'circOut' } }}
+            >
               <div className="glossary-card-top">
                 <div className="glossary-term">
-                  <strong>{title}</strong>
-                  <span className="glossary-id">{term.id}</span>
+                  <motion.strong layout>{title}</motion.strong>
+                  <motion.span layout className="glossary-id">
+                    {term.id}
+                  </motion.span>
                 </div>
                 <button
                   type="button"
@@ -117,11 +128,29 @@ export function Glossary() {
                   aria-controls={`glossary-detail-${term.id}`}
                   onClick={() => setExpandedId((prev) => (prev === term.id ? null : term.id))}
                 >
-                  {expanded ? (language === 'zh' ? '收起' : 'Collapse') : (language === 'zh' ? '展开' : 'Expand')}
+                  <span>{expanded ? (language === 'zh' ? '收起' : 'Collapse') : (language === 'zh' ? '展开' : 'Expand')}</span>
+                  <motion.svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    animate={{ rotate: expanded ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ marginLeft: 6, display: 'inline-block', verticalAlign: 'middle' }}
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </motion.svg>
                 </button>
               </div>
 
-              <p className="glossary-short">{short}</p>
+              <motion.p layout className="glossary-short">
+                {short}
+              </motion.p>
 
               <AnimatePresence initial={false}>
                 {expanded && (
@@ -129,12 +158,14 @@ export function Glossary() {
                     className="glossary-detail"
                     id={`glossary-detail-${term.id}`}
                     data-testid={`glossary-detail-${term.id}`}
-                    initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
+                    initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
                     animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, height: 'auto' }}
                     exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
-                    transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.22, ease: 'easeOut' }}
+                    transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, ease: 'easeInOut' }}
                   >
-                    <p>{long}</p>
+                    <div className="glossary-detail-content">
+                      <p>{long}</p>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

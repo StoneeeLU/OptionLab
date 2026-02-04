@@ -165,11 +165,16 @@ export function PayoffChart({ legs, spotHint }: PayoffChartProps) {
 
     chart.setOption(option)
 
-    const handleResize = () => chart.resize()
-    window.addEventListener('resize', handleResize)
+    let resizeObserver: ResizeObserver | null = null
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        chart.resize()
+      })
+      resizeObserver.observe(chartRef.current)
+    }
 
     return () => {
-      window.removeEventListener('resize', handleResize)
+      if (resizeObserver) resizeObserver.disconnect()
       if (chartInstance.current) {
         chartInstance.current.dispose()
         chartInstance.current = null

@@ -34,13 +34,13 @@
   padding: 1.25rem;
   background: color-mix(in srgb, var(--color-surface), transparent 55%);
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease,
-    border-color var(--transition-fast) ease;
+  /* Framer Motion handles transform and box-shadow on hover */
+  /* We only keep border-color transition here */
+  transition: border-color var(--transition-fast) ease;
 }
 
 .glossary-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  /* transform and box-shadow handled by JS */
   border-color: color-mix(in srgb, var(--color-primary), transparent 40%);
 }
 
@@ -62,19 +62,21 @@
 }
 
 .glossary-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   padding: 0.35rem 0.6rem;
   border-radius: 999px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
-  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease,
-    background var(--transition-fast) ease;
+  transition: border-color var(--transition-fast) ease, background var(--transition-fast) ease;
+  cursor: pointer;
 }
 
 .glossary-toggle:hover {
   border-color: color-mix(in srgb, var(--color-primary), transparent 35%);
   background: color-mix(in srgb, var(--color-primary-light), transparent 25%);
-  transform: translateY(-1px);
 }
 
 .glossary-short {
@@ -83,11 +85,14 @@
 }
 
 .glossary-detail {
+  overflow: hidden; /* Essential for height animation */
+  color: var(--color-text);
+}
+
+.glossary-detail-content {
   margin-top: 0.6rem;
   border-top: 1px solid var(--color-border);
   padding-top: 0.6rem;
-  color: var(--color-text);
-  overflow: hidden;
 }
 
 .glossary-empty {

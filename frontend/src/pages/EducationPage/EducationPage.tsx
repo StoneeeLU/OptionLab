@@ -1,4 +1,5 @@
-import { useReducedMotion, useScroll, useSpring, useTransform, motion } from 'framer-motion'
+import { useState } from 'react'
+import { useReducedMotion, useScroll, useSpring, useTransform, motion, AnimatePresence } from 'framer-motion'
 import { AnimatedContainer } from '../../components/common/AnimatedContainer'
 import { GlassPanel } from '../../components/common/GlassPanel'
 import { Glossary } from '../../components/Education/Glossary'
@@ -11,42 +12,40 @@ import { IVChapter } from '../../components/Education/chapters/IVChapter'
 import { StrategiesChapter } from '../../components/Education/chapters/StrategiesChapter'
 import { I18nProvider, useI18n } from '../../i18n/I18nContext'
 import { LanguageToggle } from '../../i18n/LanguageToggle'
-import { Tabs, TabList, Tab, TabPanel } from '../../components/common/Tabs'
-import { useEducationProgress } from '../../hooks/useEducationProgress'
+import { EducationSidebar, CHAPTERS } from '../../components/Education/Sidebar/EducationSidebar'
 import './EducationPage.css'
 
-// Icons
-import basicsIcon from '../../assets/education/basics-icon.svg'
-import chapterCompleteIcon from '../../assets/education/chapter-complete.svg'
-import greeksIcon from '../../assets/education/greeks-icon.svg'
-import ivIcon from '../../assets/education/iv-icon.svg'
-import pricingIcon from '../../assets/education/pricing-icon.svg'
-import progressBadge from '../../assets/education/progress-badge.svg'
-import strategiesIcon from '../../assets/education/strategies-icon.svg'
-
-const CHAPTERS = ['basics', 'pricing', 'greeks', 'iv', 'strategies']
-
 function EducationPageInner() {
-  const { language, t } = useI18n()
-  const { progress } = useEducationProgress()
+  const { language } = useI18n()
   const shouldReduceMotion = useReducedMotion()
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (hash && CHAPTERS.some(c => c.id === hash)) {
+      return hash
+    }
+    return 'basics'
+  })
 
+  // Scroll animations for hero
   const { scrollYProgress } = useScroll()
-  const heroYBase = useTransform(scrollYProgress, [0, 0.22], [0, -22])
+  const heroYBase = useTransform(scrollYProgress, [0, 0.22], [0, -50])
   const heroY = useSpring(heroYBase, { stiffness: 120, damping: 26, restDelta: 0.001 })
+  
+  const heroTextYBase = useTransform(scrollYProgress, [0, 0.2], [0, -15])
+  const heroTextY = useSpring(heroTextYBase, { stiffness: 120, damping: 26 })
+
+
+  const handleTabChange = (id: string) => {
+    setActiveTab(id)
+    window.history.pushState(null, '', `#${id}`)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const title = language === 'zh' ? '期权科普' : 'Options Education'
   const subtitle =
     language === 'zh'
       ? '面向新手的交互式期权入门：概念、Greeks、波动率与策略。'
       : 'An interactive introduction: concepts, Greeks, volatility, and strategies.'
-
-  const isCompleted = (id: string) => progress.completedChapters.includes(id)
-
-  // Progress calculation
-  const completedCount = Math.min(progress.completedChapters.length, CHAPTERS.length)
-  const percent = Math.round((completedCount / CHAPTERS.length) * 100)
-  const progressLabel = t('education.sidebar.progress')
 
   return (
     <div className="education-page">
@@ -55,134 +54,126 @@ function EducationPageInner() {
           {!shouldReduceMotion && (
             <motion.div className="education-hero-decor" aria-hidden="true" style={{ y: heroY }} />
           )}
-          <div className="education-hero-header">
+          <motion.div 
+            className="education-hero-header"
+            style={shouldReduceMotion ? {} : { y: heroTextY }}
+          >
             <div className="education-hero-text">
               <h1>{title}</h1>
               <p className="subtitle">{subtitle}</p>
             </div>
             <LanguageToggle />
-          </div>
+          </motion.div>
         </GlassPanel>
       </AnimatedContainer>
 
-      <Tabs defaultTab="basics" className="education-tabs-layout">
-        {/* Left Sidebar with Tabs */}
-        <aside className="education-sidebar" data-testid="education-sidebar">
-          <div className="education-sidebar-card" data-testid="education-sidebar-card">
-            {/* Progress Ring - Centered */}
-            <div className="education-sidebar-progress" data-testid="education-progress">
-              <div className="education-sidebar-progress-top">
-                <div className="education-sidebar-progress-title">{progressLabel}</div>
-                <div className="education-sidebar-progress-count" aria-label="Completion">
-                  {completedCount}/{CHAPTERS.length}
+      <div className="education-layout">
+        {/* Left Sidebar - Sticky/Fixed via Component CSS */}
+        <EducationSidebar 
+          className="education-sidebar-layout" 
+          activeId={activeTab}
+          onNavigate={handleTabChange}
+        />
+
+        {/* Main Content - Active Chapter Only */}
+        <main className="education-content">
+          <AnimatePresence mode="wait">
+            {activeTab === 'basics' && (
+              <motion.section 
+                key="basics"
+                id="basics" 
+                className="education-chapter-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="education-section">
+                  <BasicsChapter />
+                  <Quiz chapterId="basics" />
                 </div>
-              </div>
-              <div className="education-sidebar-ring-wrapper">
-                <div className="education-sidebar-ring" aria-label={`${progressLabel}: ${percent}%`}>
-                  <img className="education-sidebar-ring-badge" src={progressBadge} alt="" aria-hidden="true" />
-                  <svg viewBox="0 0 44 44" className="education-sidebar-ring-svg" aria-hidden="true">
-                    <circle className="education-sidebar-ring-track" cx="22" cy="22" r="18" />
-                    <circle
-                      className="education-sidebar-ring-fill"
-                      cx="22"
-                      cy="22"
-                      r="18"
-                      style={{ strokeDashoffset: `${Math.max(0, 100 - percent)}` }}
-                    />
-                  </svg>
-                  <div className="education-sidebar-ring-text">{percent}%</div>
+              </motion.section>
+            )}
+
+            {activeTab === 'pricing' && (
+              <motion.section 
+                key="pricing"
+                id="pricing" 
+                className="education-chapter-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="education-section">
+                  <PricingChapter />
+                  <OptionCalculator />
+                  <TimeDecayDemo />
+                  <Quiz chapterId="pricing" />
                 </div>
-              </div>
-            </div>
+              </motion.section>
+            )}
 
-            {/* Vertical Tab List */}
-            <TabList aria-label="Education Chapters" className="education-sidebar-tabs">
-              <Tab id="basics" className="education-sidebar-tab">
-                <img src={basicsIcon} alt="" className="tab-icon" aria-hidden="true" />
-                <span className="tab-label">{t('education.chapters.basics')}</span>
-                {isCompleted('basics') && (
-                  <img src={chapterCompleteIcon} alt="Completed" className="tab-status-icon" />
-                )}
-              </Tab>
-              <Tab id="pricing" className="education-sidebar-tab">
-                <img src={pricingIcon} alt="" className="tab-icon" aria-hidden="true" />
-                <span className="tab-label">{t('education.chapters.pricing')}</span>
-                {isCompleted('pricing') && (
-                  <img src={chapterCompleteIcon} alt="Completed" className="tab-status-icon" />
-                )}
-              </Tab>
-              <Tab id="greeks" className="education-sidebar-tab">
-                <img src={greeksIcon} alt="" className="tab-icon" aria-hidden="true" />
-                <span className="tab-label">{t('education.chapters.greeks')}</span>
-                {isCompleted('greeks') && (
-                  <img src={chapterCompleteIcon} alt="Completed" className="tab-status-icon" />
-                )}
-              </Tab>
-              <Tab id="iv" className="education-sidebar-tab">
-                <img src={ivIcon} alt="" className="tab-icon" aria-hidden="true" />
-                <span className="tab-label">{t('education.chapters.iv')}</span>
-                {isCompleted('iv') && (
-                  <img src={chapterCompleteIcon} alt="Completed" className="tab-status-icon" />
-                )}
-              </Tab>
-              <Tab id="strategies" className="education-sidebar-tab">
-                <img src={strategiesIcon} alt="" className="tab-icon" aria-hidden="true" />
-                <span className="tab-label">{t('education.chapters.strategies')}</span>
-                {isCompleted('strategies') && (
-                  <img src={chapterCompleteIcon} alt="Completed" className="tab-status-icon" />
-                )}
-              </Tab>
-            </TabList>
-          </div>
-        </aside>
+            {activeTab === 'greeks' && (
+              <motion.section 
+                key="greeks"
+                id="greeks" 
+                className="education-chapter-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="education-section">
+                  <GreeksChapter />
+                  <Quiz chapterId="greeks" />
+                </div>
+              </motion.section>
+            )}
 
-        {/* Main Content Area */}
-        <div className="education-main">
-          <TabPanel id="basics">
-            <div className="education-section">
-              <BasicsChapter />
-              <Quiz chapterId="basics" />
-            </div>
-          </TabPanel>
+            {activeTab === 'iv' && (
+              <motion.section 
+                key="iv"
+                id="iv" 
+                className="education-chapter-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="education-section">
+                  <IVChapter />
+                  <Quiz chapterId="iv" />
+                </div>
+              </motion.section>
+            )}
 
-          <TabPanel id="pricing">
-            <div className="education-section">
-              <PricingChapter />
-              <OptionCalculator />
-              <TimeDecayDemo />
-              <Quiz chapterId="pricing" />
-            </div>
-          </TabPanel>
-
-          <TabPanel id="greeks">
-            <div className="education-section">
-              <GreeksChapter />
-              <Quiz chapterId="greeks" />
-            </div>
-          </TabPanel>
-
-          <TabPanel id="iv">
-            <div className="education-section">
-              <IVChapter />
-              <Quiz chapterId="iv" />
-            </div>
-          </TabPanel>
-
-          <TabPanel id="strategies">
-            <div className="education-section">
-              <StrategiesChapter />
-              <StrategyBuilder />
-              <Quiz chapterId="strategies" />
-            </div>
-          </TabPanel>
+            {activeTab === 'strategies' && (
+              <motion.section 
+                key="strategies"
+                id="strategies" 
+                className="education-chapter-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="education-section">
+                  <StrategiesChapter />
+                  <StrategyBuilder />
+                  <Quiz chapterId="strategies" />
+                </div>
+              </motion.section>
+            )}
+          </AnimatePresence>
 
           <AnimatedContainer animation="fadeIn">
             <GlassPanel className="education-section-panel">
               <Glossary />
             </GlassPanel>
           </AnimatedContainer>
-        </div>
-      </Tabs>
+        </main>
+      </div>
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 
 import { useEducationProgress } from '../../../hooks/useEducationProgress'
+import chapterCompleteIcon from '../../../assets/education/chapter-complete.svg'
 import './ChapterNav.css'
 
 type Chapter = {
@@ -59,6 +61,14 @@ export function ChapterNav() {
             className={`chapter-link${chapter.active ? ' active' : ''}`}
             data-testid={`chapter-link-${chapter.id}`}
           >
+            {chapter.active && (
+              <motion.div
+                layoutId="chapterNavActive"
+                className="chapter-link-bg"
+                initial={false}
+                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+              />
+            )}
             <span className="chapter-link-label">{chapter.label}</span>
             {chapter.completed && (
               <span
@@ -66,7 +76,7 @@ export function ChapterNav() {
                 data-testid={`chapter-complete-${chapter.id}`}
                 aria-label="Completed"
               >
-                Done
+                <img src={chapterCompleteIcon} alt="" aria-hidden="true" />
               </span>
             )}
           </a>

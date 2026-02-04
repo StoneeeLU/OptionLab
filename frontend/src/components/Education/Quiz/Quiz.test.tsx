@@ -30,19 +30,32 @@ describe('Quiz', () => {
     expect(screen.getByTestId('quiz-feedback').textContent).toMatch(/incorrect|回答错误/i)
   })
 
-  it('persists score to localStorage when finishing', () => {
+  it('persists score to localStorage when finishing', async () => {
     render(
       <I18nProvider>
         <Quiz chapterId="basics" />
       </I18nProvider>,
     )
 
+    // Q1
     fireEvent.click(screen.getByTestId('quiz-choice-0'))
     fireEvent.click(screen.getByTestId('quiz-next'))
+
+    // Q2 - Wait for prompt to ensure transition complete
+    await screen.findByText(/option buyer pays/i)
     fireEvent.click(screen.getByTestId('quiz-choice-0'))
-    fireEvent.click(screen.getByTestId('quiz-next'))
+    
+    // Wait for next button (in feedback)
+    const q2Next = await screen.findByTestId('quiz-next')
+    fireEvent.click(q2Next)
+
+    // Q3 - Wait for prompt
+    await screen.findByText(/option seller, the key is/i)
     fireEvent.click(screen.getByTestId('quiz-choice-0'))
-    fireEvent.click(screen.getByTestId('quiz-finish'))
+    
+    // Wait for finish button
+    const finish = await screen.findByTestId('quiz-finish')
+    fireEvent.click(finish)
 
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) as string) as {
       quizScores: Record<string, number>

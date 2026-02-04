@@ -293,79 +293,113 @@ export function Quiz({ chapterId }: QuizProps) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={current.id}
-            className="quiz-question"
-            data-testid="quiz-question"
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
-            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.22, ease: 'easeOut' }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: 20 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -20 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="quiz-step-container"
           >
-            {language === 'zh' ? current.prompt.zh : current.prompt.en}
-          </motion.div>
-        </AnimatePresence>
+            <div className="quiz-question" data-testid="quiz-question">
+              {language === 'zh' ? current.prompt.zh : current.prompt.en}
+            </div>
 
-        <div className="quiz-choices" role="list">
-          {current.choices.map((c, i) => {
-            const choiceText = language === 'zh' ? c.zh : c.en
-            const isCorrect = i === current.correctIndex
-            const isSelected = lastChoice === i
-            const showState = answered
-            return (
-              <button
-                key={`${current.id}_${i}`}
-                type="button"
-                role="listitem"
-                data-testid={`quiz-choice-${i}`}
-                className={`quiz-choice${showState && isCorrect ? ' correct' : ''}${showState && isSelected && !isCorrect ? ' wrong' : ''}`}
-                onClick={() => submitChoice(i)}
-              >
-                {choiceText}
-              </button>
-            )
-          })}
-        </div>
+            <div className="quiz-choices" role="list">
+              {current.choices.map((c, i) => {
+                const choiceText = language === 'zh' ? c.zh : c.en
+                const isCorrect = i === current.correctIndex
+                const isSelected = lastChoice === i
+                const showState = answered
 
-        <AnimatePresence initial={false}>
-          {answered && (
-            <motion.div
-              className="quiz-feedback"
-              data-testid="quiz-feedback"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-              animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2, ease: 'easeOut' }}
-            >
-              <div className="quiz-feedback-title">
-                {lastChoice === current.correctIndex
-                  ? language === 'zh'
-                    ? '回答正确'
-                    : 'Correct'
-                  : language === 'zh'
-                    ? '回答错误'
-                    : 'Incorrect'}
-              </div>
-              <div className="quiz-feedback-text">
-                {language === 'zh' ? current.explanation.zh : current.explanation.en}
-              </div>
-              <div className="quiz-actions">
-                {index < questions.length - 1 ? (
-                  <button type="button" data-testid="quiz-next" className="quiz-next" onClick={next}>
-                    {language === 'zh' ? '下一题' : 'Next'}
-                  </button>
-                ) : (
-                  <button
+                let statusClass = ''
+                if (showState) {
+                  if (isCorrect) statusClass = ' correct'
+                  else if (isSelected) statusClass = ' wrong'
+                }
+
+                return (
+                  <motion.button
+                    key={`${current.id}_${i}`}
                     type="button"
-                    data-testid="quiz-finish"
-                    className="quiz-next"
-                    onClick={finalize}
-                    disabled={!completed}
+                    role="listitem"
+                    data-testid={`quiz-choice-${i}`}
+                    className={`quiz-choice${statusClass}`}
+                    onClick={() => submitChoice(i)}
+                    whileHover={!answered ? { scale: 1.02 } : {}}
+                    whileTap={!answered ? { scale: 0.98 } : {}}
+                    animate={
+                      showState && isCorrect
+                        ? { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+                        : showState && isSelected && !isCorrect
+                          ? { x: [0, -5, 5, -5, 5, 0], transition: { duration: 0.4 } }
+                          : {}
+                    }
                   >
-                    {language === 'zh' ? '完成并保存' : 'Finish & Save'}
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          )}
+                    <div className="choice-content">
+                      <span className="choice-text">{choiceText}</span>
+                      {showState && isCorrect && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="choice-icon success"
+                        >
+                          ✓
+                        </motion.span>
+                      )}
+                      {showState && isSelected && !isCorrect && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="choice-icon error"
+                        >
+                          ✕
+                        </motion.span>
+                      )}
+                    </div>
+                  </motion.button>
+                )
+              })}
+            </div>
+
+            {answered && (
+              <motion.div
+                className="quiz-feedback"
+                data-testid="quiz-feedback"
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="quiz-feedback-title">
+                  {lastChoice === current.correctIndex
+                    ? language === 'zh'
+                      ? '回答正确'
+                      : 'Correct'
+                    : language === 'zh'
+                      ? '回答错误'
+                      : 'Incorrect'}
+                </div>
+                <div className="quiz-feedback-text">
+                  {language === 'zh' ? current.explanation.zh : current.explanation.en}
+                </div>
+                <div className="quiz-actions">
+                  {index < questions.length - 1 ? (
+                    <button type="button" data-testid="quiz-next" className="quiz-next" onClick={next}>
+                      {language === 'zh' ? '下一题' : 'Next'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      data-testid="quiz-finish"
+                      className="quiz-next"
+                      onClick={finalize}
+                      disabled={!completed}
+                    >
+                      {language === 'zh' ? '完成并保存' : 'Finish & Save'}
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
         </AnimatePresence>
       </div>
     </GlassPanel>
