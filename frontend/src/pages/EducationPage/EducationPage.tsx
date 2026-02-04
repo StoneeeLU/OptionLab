@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useReducedMotion, useScroll, useSpring, useTransform, motion, AnimatePresence } from 'framer-motion'
 import { AnimatedContainer } from '../../components/common/AnimatedContainer'
 import { GlassPanel } from '../../components/common/GlassPanel'
-import { Glossary } from '../../components/Education/Glossary'
 import { Quiz } from '../../components/Education/Quiz'
 import { OptionCalculator, StrategyBuilder, TimeDecayDemo, GreeksSensitivityExplorer } from '../../components/Education/simulators'
 import { IVSmileChart } from '../../components/Education/charts'
@@ -223,12 +222,6 @@ function EducationPageInner() {
               </motion.section>
             )}
           </AnimatePresence>
-
-          <AnimatedContainer animation="fadeIn">
-            <GlassPanel className="education-section-panel">
-              <Glossary />
-            </GlassPanel>
-          </AnimatedContainer>
         </main>
       </div>
     </div>

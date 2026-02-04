@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 import { GlassPanel } from '../../common/GlassPanel'
 import { useI18n } from '../../../i18n/I18nContext'
 import { useEducationProgress } from '../../../hooks/useEducationProgress'
-import { OptionCalculator } from '../simulators/OptionCalculator'
-import { TimeDecayDemo } from '../simulators/TimeDecayDemo'
 
 const CHAPTER_ID = 'pricing'
 
@@ -138,17 +136,9 @@ export function PricingChapter() {
           <h3>{language === 'zh' ? '模型与模拟器' : 'Models & Simulators'}</h3>
           <p>
             {language === 'zh'
-              ? 'Black-Scholes 是一个常见的欧式期权定价框架：它把价格看成输入变量（S, K, 波动率, 时间, 利率）的函数。'
-              : 'Black-Scholes is a common European option pricing framework: it treats price as a function of inputs (S, K, volatility, time, rate).'}
+              ? 'Black-Scholes 是一个常见的欧式期权定价框架：它把价格看成输入变量（S, K, 波动率, 时间, 利率）的函数。下方提供了交互式计算器和时间衰减演示，帮助你直观理解这些概念。'
+              : 'Black-Scholes is a common European option pricing framework: it treats price as a function of inputs (S, K, volatility, time, rate). Interactive calculators and time decay demos are provided below to help you visualize these concepts.'}
           </p>
-          
-          <div className="education-simulator-container">
-            <OptionCalculator />
-          </div>
-
-          <div className="education-simulator-container" style={{ marginTop: '2rem' }}>
-            <TimeDecayDemo />
-          </div>
         </section>
       </div>
 

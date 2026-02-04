@@ -23,8 +23,7 @@ describe('PricingChapter', () => {
 
     expect(screen.getByRole('heading', { level: 2, name: /pricing/i })).toBeInTheDocument()
     expect(screen.getByTestId('pricing-value-diagram')).toBeInTheDocument()
-    expect(screen.getByTestId('option-calculator')).toBeInTheDocument()
-    expect(screen.getByTestId('time-decay-demo')).toBeInTheDocument()
+    // Simulators are now rendered in EducationPage, not in PricingChapter
   })
 
   it('completion button persists progress', () => {
