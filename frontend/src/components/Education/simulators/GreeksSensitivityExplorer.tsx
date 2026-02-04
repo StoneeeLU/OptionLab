@@ -150,6 +150,7 @@ export function GreeksSensitivityExplorer() {
                 />
                 <input
                     type="number"
+                    aria-label={`${labels.spot} value`}
                     min={1} max={500} step={1}
                     value={inputs.spot}
                     onChange={(e) => setField('spot', clamp(Number(e.target.value), 1, 500))}
@@ -170,6 +171,7 @@ export function GreeksSensitivityExplorer() {
                 />
                 <input
                     type="number"
+                    aria-label={`${labels.strike} value`}
                     min={1} max={500} step={1}
                     value={inputs.strike}
                     onChange={(e) => setField('strike', clamp(Number(e.target.value), 1, 500))}
@@ -190,6 +192,7 @@ export function GreeksSensitivityExplorer() {
                  />
                 <input
                     type="number"
+                    aria-label={`${labels.volatility} value`}
                     min={0.01} max={1.5} step={0.01}
                     value={inputs.volatility}
                     onChange={(e) => setField('volatility', clamp(Number(e.target.value), 0.01, 1.5))}
@@ -210,6 +213,7 @@ export function GreeksSensitivityExplorer() {
                 />
                 <input
                     type="number"
+                    aria-label={`${labels.time} value`}
                     min={0.01} max={2} step={0.01}
                     value={inputs.time}
                     onChange={(e) => setField('time', clamp(Number(e.target.value), 0.01, 2))}
@@ -230,6 +234,7 @@ export function GreeksSensitivityExplorer() {
                 />
                 <input
                     type="number"
+                    aria-label={`${labels.rate} value`}
                     min={0} max={0.2} step={0.001}
                     value={inputs.rate}
                     onChange={(e) => setField('rate', clamp(Number(e.target.value), 0, 0.2))}

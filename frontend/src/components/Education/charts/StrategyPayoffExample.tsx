@@ -145,7 +145,12 @@ export function StrategyPayoffExample({ name, description, legs, spot }: Strateg
   })), [legs])
 
   return (
-    <GlassPanel variant="subtle" className="strategy-payoff-example">
+    <GlassPanel 
+      variant="subtle" 
+      className="strategy-payoff-example"
+      role="region"
+      aria-label={language === 'zh' ? name.zh : name.en}
+    >
       <div className="spe-header">
         <h4>{language === 'zh' ? name.zh : name.en}</h4>
         {description && (

@@ -11,6 +11,12 @@
   gap: 1rem;
 }
 
+.iv-smile-chart-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
 .iv-smile-chart-controls {
   display: flex;
   gap: 0.5rem;

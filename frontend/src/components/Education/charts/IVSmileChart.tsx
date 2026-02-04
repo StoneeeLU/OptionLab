@@ -147,7 +147,7 @@ export function IVSmileChart() {
     <GlassPanel variant="subtle" className={`iv-smile-chart ${is3D ? 'view-3d' : ''}`}>
       <div className="iv-smile-chart-header">
         <div>
-          <h4>{labels.title}</h4>
+          <h3>{labels.title}</h3>
           <p className="subtitle">{labels.subtitle}</p>
         </div>
         <div className="iv-smile-chart-controls">
@@ -169,7 +169,9 @@ export function IVSmileChart() {
         <div 
           className="iv-smile-chart-canvas" 
           ref={chartRef} 
-          data-testid="iv-smile-chart-2d" 
+          data-testid="iv-smile-chart-2d"
+          role="img" 
+          aria-label={labels.title}
         />
       )}
     </GlassPanel>

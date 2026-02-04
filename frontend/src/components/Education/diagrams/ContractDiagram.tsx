@@ -75,6 +75,11 @@ export const ContractDiagram: React.FC<ContractDiagramProps> = ({
           className={`contract-header ${type}`}
           onMouseEnter={() => handleMouseEnter('type')}
           onMouseLeave={handleMouseLeave}
+          onFocus={() => handleMouseEnter('type')}
+          onBlur={handleMouseLeave}
+          tabIndex={0}
+          role="button"
+          aria-label={labels.type.label}
         >
           <span>{labels.title}</span>
           <span>{type.toUpperCase()}</span>
@@ -85,6 +90,11 @@ export const ContractDiagram: React.FC<ContractDiagramProps> = ({
             className={`contract-section ${hoveredSection === 'underlying' ? 'active' : ''}`}
             onMouseEnter={() => handleMouseEnter('underlying')}
             onMouseLeave={handleMouseLeave}
+            onFocus={() => handleMouseEnter('underlying')}
+            onBlur={handleMouseLeave}
+            tabIndex={0}
+            role="button"
+            aria-label={labels.underlying.label}
           >
             <span className="section-label">{labels.underlying.label}</span>
             <span className="section-value">{underlying}</span>
@@ -94,6 +104,11 @@ export const ContractDiagram: React.FC<ContractDiagramProps> = ({
             className={`contract-section ${hoveredSection === 'strike' ? 'active' : ''}`}
             onMouseEnter={() => handleMouseEnter('strike')}
             onMouseLeave={handleMouseLeave}
+            onFocus={() => handleMouseEnter('strike')}
+            onBlur={handleMouseLeave}
+            tabIndex={0}
+            role="button"
+            aria-label={labels.strike.label}
           >
             <span className="section-label">{labels.strike.label}</span>
             <span className="section-value">{strike}</span>
@@ -103,6 +118,11 @@ export const ContractDiagram: React.FC<ContractDiagramProps> = ({
             className={`contract-section ${hoveredSection === 'expiry' ? 'active' : ''}`}
             onMouseEnter={() => handleMouseEnter('expiry')}
             onMouseLeave={handleMouseLeave}
+            onFocus={() => handleMouseEnter('expiry')}
+            onBlur={handleMouseLeave}
+            tabIndex={0}
+            role="button"
+            aria-label={labels.expiry.label}
           >
             <span className="section-label">{labels.expiry.label}</span>
             <span className="section-value">{expiry}</span>
@@ -112,6 +132,11 @@ export const ContractDiagram: React.FC<ContractDiagramProps> = ({
             className={`contract-section ${hoveredSection === 'premium' ? 'active' : ''}`}
             onMouseEnter={() => handleMouseEnter('premium')}
             onMouseLeave={handleMouseLeave}
+            onFocus={() => handleMouseEnter('premium')}
+            onBlur={handleMouseLeave}
+            tabIndex={0}
+            role="button"
+            aria-label={labels.premium.label}
           >
             <span className="section-label">{labels.premium.label}</span>
             <span className="section-value">{premium}</span>
