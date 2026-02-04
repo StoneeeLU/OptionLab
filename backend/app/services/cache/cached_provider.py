@@ -14,8 +14,8 @@ class CachedDataProvider:
         self,
         provider,
         cache_db_path: str = "backend/data/cache.db",
-        option_chain_ttl: int = 300,  # 5 minutes
-        spot_price_ttl: int = 60,     # 1 minute
+        option_chain_ttl: int = 10,   # 10 seconds
+        spot_price_ttl: int = 10,     # 10 seconds
         historical_ttl: int = 86400    # 1 day
     ):
         """
