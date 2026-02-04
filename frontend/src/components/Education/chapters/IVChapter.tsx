@@ -128,19 +128,7 @@ export function IVChapter() {
           </div>
         </section>
 
-        <section aria-label={language === 'zh' ? '可视化预留' : 'Visualization placeholder'}>
-          <h3>{language === 'zh' ? '可视化预留' : 'Visualization placeholder'}</h3>
-          <div className="education-placeholder" data-testid="iv-surface-preview">
-            {language === 'zh'
-              ? '后续任务将显示 IV 曲面/Smile 示例。'
-              : 'Later tasks will show an IV surface/smile example here.'}
-          </div>
-          <p>
-            <Link to="/volatility" data-testid="iv-volatility-link">
-              {language === 'zh' ? '查看完整波动率曲面' : 'Open volatility surface tool'}
-            </Link>
-          </p>
-        </section>
+{/* IV Smile visualization is now provided by the IVSmileChart component on EducationPage */}
       </div>
 
       <footer className="education-chapter-footer">

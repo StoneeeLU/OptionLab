@@ -12,7 +12,7 @@ describe('IVChapter', () => {
     localStorage.clear()
   })
 
-  it('renders IV explanation and a link to /volatility', () => {
+  it('renders IV explanation and CTA links', () => {
     render(
       <MemoryRouter>
         <I18nProvider>
@@ -22,8 +22,8 @@ describe('IVChapter', () => {
     )
 
     expect(screen.getByRole('heading', { level: 2, name: /iv|implied volatility/i })).toBeInTheDocument()
-    expect(screen.getByTestId('iv-surface-preview')).toBeInTheDocument()
-    const link = screen.getByTestId('iv-volatility-link')
+    // IV visualization is now provided by IVSmileChart component on EducationPage
+    const link = screen.getByTestId('iv-cta-volatility')
     expect(link).toHaveAttribute('href', '/volatility')
   })
 

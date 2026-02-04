@@ -2,8 +2,6 @@
   display: grid;
   gap: 1.5rem;
   padding: 1.5rem;
-  max-width: 800px; /* Optional constraint */
-  margin: 0 auto;
 }
 
 .greeks-explorer-header {

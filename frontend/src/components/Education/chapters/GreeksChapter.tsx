@@ -358,15 +358,7 @@ export function GreeksChapter() {
           )
         })}
 
-        {/* Visualization Placeholder */}
-        <section aria-label={language === 'zh' ? '交互可视化' : 'Interactive visualization'}>
-          <h3>{language === 'zh' ? '交互可视化' : 'Interactive visualization'}</h3>
-          <div className="education-placeholder" data-testid="greeks-visual-placeholder">
-            {language === 'zh'
-              ? '后续将嵌入 Greeks 曲线图表，可调整参数实时观察各 Greek 的变化。'
-              : 'Coming soon: Interactive Greeks charts where you can adjust parameters and observe changes in real-time.'}
-          </div>
-        </section>
+        {/* End of Greek details */}
       </div>
 
       <footer className="education-chapter-footer">
