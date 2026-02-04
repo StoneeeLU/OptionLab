@@ -1,3 +1,5 @@
 export { PayoffChart } from './PayoffChart'
 export type { PayoffLeg } from './PayoffChart'
 export { IVSmileChart } from './IVSmileChart'
+export { StrategyPayoffExample } from './StrategyPayoffExample'
+export type { StrategyPayoffExampleProps, StrategyLeg } from './StrategyPayoffExample'

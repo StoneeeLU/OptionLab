@@ -57,7 +57,7 @@ function computeDomain(legs: PayoffLeg[], spotHint?: number): { min: number; max
   }
 }
 
-function computeSeriesPoints(legs: PayoffLeg[], spotHint?: number): Point[] {
+function computeSeriesPoints(legs: PayoffLeg[], spotHint?: number, offset: number = 0): Point[] {
   const domain = computeDomain(legs, spotHint)
   const steps = 120
   const step = (domain.max - domain.min) / steps
@@ -65,7 +65,7 @@ function computeSeriesPoints(legs: PayoffLeg[], spotHint?: number): Point[] {
 
   for (let i = 0; i <= steps; i += 1) {
     const x = domain.min + step * i
-    points.push([x, payoffAtExpiry(x, legs)])
+    points.push([x, payoffAtExpiry(x, legs) + offset])
   }
 
   return points
@@ -105,13 +105,14 @@ function findBreakevens(points: Point[]): number[] {
 export type PayoffChartProps = {
   legs: PayoffLeg[]
   spotHint?: number
+  offset?: number
 }
 
-export function PayoffChart({ legs, spotHint }: PayoffChartProps) {
+export function PayoffChart({ legs, spotHint, offset = 0 }: PayoffChartProps) {
   const chartRef = useRef<HTMLDivElement>(null)
   const chartInstance = useRef<echarts.ECharts | null>(null)
 
-  const points = useMemo(() => computeSeriesPoints(legs, spotHint), [legs, spotHint])
+  const points = useMemo(() => computeSeriesPoints(legs, spotHint, offset), [legs, spotHint, offset])
   const breakevens = useMemo(() => findBreakevens(points), [points])
 
   useEffect(() => {

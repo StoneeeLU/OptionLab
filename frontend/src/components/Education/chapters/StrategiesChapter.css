@@ -1,0 +1,43 @@
+.strategies-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.strategy-example-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  /* Ensure it has some spacing from edges if needed, though parent likely handles it */
+}
+
+.strategy-usage-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 0 0.5rem;
+  /* Align with the panel above visually */
+}
+
+.usage-section h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #888);
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.usage-section p {
+  font-size: 0.95rem;
+  color: var(--text-primary, #eee);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .strategy-usage-info {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

@@ -22,18 +22,19 @@ describe('StrategiesChapter', () => {
     )
 
     expect(screen.getByRole('heading', { level: 2, name: /strategies/i })).toBeInTheDocument()
-    expect(screen.getByTestId('strategies-grid')).toBeInTheDocument()
+    expect(screen.getByTestId('strategies-list')).toBeInTheDocument()
 
     ;[
-      'bull_call_spread',
-      'bear_put_spread',
-      'straddle',
-      'strangle',
-      'iron_condor',
+      'bull-call-spread',
+      'bear-put-spread',
+      'long-straddle',
+      'long-strangle',
+      'iron-condor',
     ].forEach((id) => {
       expect(screen.getByTestId(`strategy-${id}`)).toBeInTheDocument()
-      expect(screen.getByTestId(`strategy-payoff-${id}`)).toBeInTheDocument()
     })
+
+    expect(screen.getAllByTestId('payoff-chart')).toHaveLength(5)
   })
 
   it('completion button persists progress', () => {

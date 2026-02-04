@@ -108,7 +108,61 @@ function EducationPageInner() {
               >
                 <div className="education-section">
                   <PricingChapter />
+                  
+                  <div className="simulator-intro" style={{ margin: '1rem 0 0' }}>
+                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{language === 'zh' ? '期权计算器' : 'Option Calculator'}</h3>
+                    <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+                      {language === 'zh' 
+                        ? 'Black-Scholes 模型是期权定价的基石。试着调整下方的输入参数，观察期权价格和 Greeks 如何变化。' 
+                        : 'The Black-Scholes model is the cornerstone of option pricing. Try adjusting the inputs below to see how option prices and Greeks respond.'}
+                    </p>
+                    <div className="simulator-prompt" style={{ 
+                      background: 'rgba(255,255,255,0.05)', 
+                      padding: '1rem', 
+                      borderRadius: '8px',
+                      marginTop: '1rem',
+                      borderLeft: '4px solid var(--color-primary)'
+                    }}>
+                      <strong>{language === 'zh' ? '试一试：' : 'Try it yourself:'}</strong>
+                      <ul style={{ margin: '0.5rem 0 0 1.5rem', color: 'var(--color-text-secondary)' }}>
+                         <li>{language === 'zh' 
+                           ? '将波动率 (Volatility) 设为 50%，观察价格变化。'
+                           : 'Set Volatility to 50% and see how the price changes.'}
+                         </li>
+                         <li>{language === 'zh'
+                           ? '改变距到期时间 (Days to Expiration)，看看 Theta 的影响。'
+                           : 'Change Days to Expiration to see the impact of Theta.'}
+                         </li>
+                      </ul>
+                    </div>
+                  </div>
+
                   <OptionCalculator />
+
+                  <div className="simulator-intro" style={{ margin: '2rem 0 0' }}>
+                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>{language === 'zh' ? '时间衰减演示' : 'Time Decay Demo'}</h3>
+                    <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+                      {language === 'zh'
+                        ? '期权是耗损性资产。此演示展示了时间流逝对期权价值的侵蚀（即 Theta 衰减），尤其是在临近到期时。'
+                        : 'Options are wasting assets. This demo visualizes how time erodes option value (Theta decay), especially as expiration approaches.'}
+                    </p>
+                     <div className="simulator-prompt" style={{ 
+                      background: 'rgba(255,255,255,0.05)', 
+                      padding: '1rem', 
+                      borderRadius: '8px',
+                      marginTop: '1rem',
+                      borderLeft: '4px solid var(--color-primary)'
+                    }}>
+                      <strong>{language === 'zh' ? '试一试：' : 'Try it yourself:'}</strong>
+                      <ul style={{ margin: '0.5rem 0 0 1.5rem', color: 'var(--color-text-secondary)' }}>
+                         <li>{language === 'zh'
+                           ? '观察曲线在最后 30 天是如何加速下降的。'
+                           : 'Watch how the curve accelerates downwards in the last 30 days.'}
+                         </li>
+                      </ul>
+                    </div>
+                  </div>
+
                   <TimeDecayDemo />
                   <Quiz chapterId="pricing" />
                 </div>

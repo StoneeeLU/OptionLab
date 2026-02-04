@@ -1,0 +1,91 @@
+.strategy-payoff-example {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.spe-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.spe-header .subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.spe-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .spe-content {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.spe-chart {
+  min-height: 300px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Override PayoffChart internal padding/margins if needed */
+.spe-chart .payoff-chart {
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+}
+
+.spe-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-item .label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-item .value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-feature-settings: "tnum";
+}
+
+.stat-item .value.positive {
+  color: var(--color-success);
+}
+
+.stat-item .value.negative {
+  color: var(--color-danger);
+}
+
+.value-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

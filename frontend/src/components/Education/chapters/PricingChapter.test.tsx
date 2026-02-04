@@ -23,7 +23,8 @@ describe('PricingChapter', () => {
 
     expect(screen.getByRole('heading', { level: 2, name: /pricing/i })).toBeInTheDocument()
     expect(screen.getByTestId('pricing-value-diagram')).toBeInTheDocument()
-    expect(screen.getByTestId('pricing-calculator-preview')).toBeInTheDocument()
+    expect(screen.getByTestId('option-calculator')).toBeInTheDocument()
+    expect(screen.getByTestId('time-decay-demo')).toBeInTheDocument()
   })
 
   it('completion button persists progress', () => {
