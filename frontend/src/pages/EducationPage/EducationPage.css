@@ -427,6 +427,84 @@
   color: var(--color-text-secondary);
 }
 
+/* Basics Chapter Styles */
+.education-table-wrapper {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+.education-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.education-table th,
+.education-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.education-table th {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: color-mix(in srgb, var(--color-surface), transparent 50%);
+}
+
+.education-table tbody tr:hover {
+  background: color-mix(in srgb, var(--color-primary), transparent 95%);
+}
+
+.risk-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.risk-box {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+}
+
+.risk-box h4 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.risk-box p {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.risk-box p:last-child {
+  margin-bottom: 0;
+}
+
+.risk-box.buyer {
+  border-color: color-mix(in srgb, var(--color-success), transparent 60%);
+  background: color-mix(in srgb, var(--color-success), transparent 92%);
+}
+
+.risk-box.buyer h4 {
+  color: var(--color-success);
+}
+
+.risk-box.seller {
+  border-color: color-mix(in srgb, var(--color-danger), transparent 60%);
+  background: color-mix(in srgb, var(--color-danger), transparent 92%);
+}
+
+.risk-box.seller h4 {
+  color: var(--color-danger);
+}
+
 .education-section-panel {
   padding: 24px;
 }
