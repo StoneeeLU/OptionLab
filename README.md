@@ -1,345 +1,403 @@
-# OptionLab - Options Analysis & Valuation Platform
+<div align="center">
 
-**A comprehensive options analysis platform for identifying mispriced options through theoretical pricing, Greeks analysis, volatility modeling, and multi-leg strategy evaluation.**
+<img src="https://img.shields.io/badge/OptionLab-Options%20Analysis-6366f1?style=for-the-badge" alt="OptionLab" />
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![React 19](https://img.shields.io/badge/react-19-blue.svg)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
+# OptionLab
 
----
+### Options Analysis & Valuation Platform
 
-## 🚀 Features
+<br />
 
-### Core Analysis
-- **Hybrid Pricing Engine**: Black-Scholes for European options, CRR binomial tree for American options
-- **Greeks Calculator**: Delta, Gamma, Theta, Vega, Rho with analytical formulas
-- **Volatility Analysis**: Historical volatility, Implied volatility, IV percentile
-- **Put-Call Parity**: Detect arbitrage opportunities and synthetic pricing violations
+**[English](README.md)** &nbsp;|&nbsp; **[中文](README_CN.md)**
 
-### Multi-Leg Strategies
-- **Strategy Recognition**: Automatically identifies 6 common strategies (Vertical Spread, Straddle, Strangle, Iron Condor, Butterfly, Calendar Spread)
-- **Combined Greeks**: Net position Greeks across all legs
-- **P&L Diagrams**: Interactive profit/loss charts at expiration
-- **Breakeven Analysis**: Automatic breakeven point calculation
+<br />
 
-### Visualization
-- **3D Volatility Surface**: Interactive scatter plot showing IV across strikes and expirations
-- **Options Chain**: Side-by-side calls/puts table with real-time filtering
-- **Interactive Charts**: ECharts-powered visualizations with zoom, rotation, tooltips
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-### Data & Filtering
-- **Options Chain Filtering**: By expiry, moneyness (ITM/ATM/OTM), volume, open interest
-- **Real-time Data**: yfinance integration with 5-minute caching
-- **Watchlist**: Save favorite symbols and options for quick access
+<br />
 
-### User Experience
-- **Dark/Light Themes**: Professional color schemes with smooth transitions
-- **Responsive Design**: Works on desktop, tablet, mobile
-- **Accessibility**: ARIA labels, keyboard navigation, focus states
+*Identify mispriced options through theoretical pricing, Greeks analysis, volatility modeling, and multi-leg strategy evaluation.*
+
+<br />
+
+</div>
 
 ---
 
-## 📦 Installation
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 📊 Pricing & Greeks
+
+- **Hybrid Pricing Engine**  
+  Black-Scholes (py_vollib) for European options  
+  CRR Binomial Tree (QuantLib) for American options
+
+- **Complete Greeks**  
+  Delta, Gamma, Theta, Vega, Rho
+
+- **Mispricing Detection**  
+  Compare theoretical vs market prices
+
+</td>
+<td width="50%">
+
+### 📈 Volatility Analysis
+
+- **Historical Volatility**  
+  Calculate from price history
+
+- **Implied Volatility**  
+  Extract from market prices
+
+- **IV Percentile**  
+  Rank current IV vs historical
+
+- **3D Volatility Surface**  
+  Interactive visualization across strikes & expirations
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🎯 Multi-Leg Strategies
+
+- **Strategy Recognition**  
+  Auto-identifies: Vertical Spread, Straddle, Strangle, Iron Condor, Butterfly, Calendar Spread
+
+- **Combined Greeks**  
+  Net position Greeks across all legs
+
+- **P&L Diagrams**  
+  Interactive profit/loss at expiration
+
+- **Breakeven Analysis**  
+  Automatic calculation
+
+</td>
+<td width="50%">
+
+### 📚 Education Center
+
+- **Interactive Chapters**  
+  Basics, Pricing, Greeks, Implied Volatility, Strategies
+
+- **Live Simulators**  
+  Option Calculator, Time Decay Demo, Greeks Sensitivity Explorer
+
+- **Quizzes**  
+  Test your knowledge after each chapter
+
+- **Bilingual**  
+  Full English & Chinese support
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 💾 Data & Export
+
+- **Real-time Data**  
+  yfinance integration with caching
+
+- **Options Chain Filtering**  
+  By expiry, moneyness, volume, open interest
+
+- **CSV Export**  
+  Export analysis results
+
+- **Watchlist**  
+  Save favorite symbols
+
+</td>
+<td width="50%">
+
+### 🎨 User Experience
+
+- **Dark/Light Themes**  
+  Professional color schemes
+
+- **Smooth Animations**  
+  Framer Motion powered
+
+- **Responsive Design**  
+  Desktop, tablet, mobile
+
+- **Accessibility**  
+  ARIA labels, keyboard navigation
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- **Python**: 3.11 or higher
-- **Node.js**: 18 or higher
-- **npm**: 9 or higher
 
-### Backend Setup
+| Requirement | Version |
+|-------------|---------|
+| Python | 3.11+ |
+| Node.js | 18+ |
+| npm | 9+ |
+
+### 1. Backend
 
 ```bash
-# Navigate to backend directory
 cd backend
-
-# Install dependencies (using pip or poetry)
-pip install -r requirements.txt
-
-# Or with poetry
-poetry install
-
-# Run the server
+pip install -e ".[dev]"
 uvicorn app.main:app --reload --port 8000
 ```
 
-### Frontend Setup
+### 2. Frontend
 
 ```bash
-# Navigate to frontend directory
 cd frontend
-
-# Install dependencies
 npm install
-
-# Run development server
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:5173`  
-The backend API will be available at `http://localhost:8000`  
-API documentation at `http://localhost:8000/docs`
+### 3. Open Browser
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:8000 |
+| API Docs (Swagger) | http://localhost:8000/docs |
 
 ---
 
-## 🎯 Quick Start
+## 🐳 Docker
 
-1. **Start Backend**:
-   ```bash
-   cd backend
-   uvicorn app.main:app --reload
-   ```
+```bash
+# Build and start
+docker compose up --build
 
-2. **Start Frontend**:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
+# Background mode
+docker compose up -d --build
 
-3. **Open Browser**: Navigate to `http://localhost:5173`
+# View logs
+docker compose logs -f
 
-4. **Analyze Options**:
-   - Enter a stock symbol (e.g., AAPL)
-   - Browse the options chain
-   - Select options to analyze
-   - View theoretical prices, Greeks, IV analysis
-   - Create multi-leg strategies and see P&L diagrams
+# Stop
+docker compose down
+```
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend | http://localhost:8000 |
 
 ---
 
 ## 🏗️ Architecture
 
-### Backend (FastAPI)
 ```
-backend/
-├── app/
-│   ├── api/           # API endpoints (health, options, analysis, watchlist)
-│   ├── models/        # Pydantic data models
-│   ├── services/      # Business logic
-│   │   ├── providers/ # Data providers (yfinance)
-│   │   ├── pricing/   # Pricing engines (Black-Scholes, Binomial)
-│   │   ├── analysis/  # Analysis services (Greeks, volatility, strategies)
-│   │   └── cache/     # SQLite caching layer
-│   └── core/          # Configuration
-└── tests/             # pytest test suite (130+ tests)
+OptionLab/
+├── backend/                    # FastAPI (Python 3.11+)
+│   ├── app/
+│   │   ├── api/               # Routers: health, options, analysis, volatility, watchlist, export
+│   │   ├── models/            # Pydantic models
+│   │   ├── services/
+│   │   │   ├── pricing/       # Black-Scholes, Binomial Tree
+│   │   │   ├── analysis/      # Greeks, volatility, strategies, P&L
+│   │   │   ├── providers/     # yfinance data provider
+│   │   │   └── cache/         # SQLite caching
+│   │   └── core/              # Config, error handlers, performance
+│   └── tests/                 # pytest suite
+│
+├── frontend/                   # React 19 + TypeScript + Vite
+│   └── src/
+│       ├── pages/             # Home, Options, Education, Volatility, Watchlist
+│       ├── components/        # OptionsChain, Analysis, Charts, Education
+│       ├── services/          # API client (axios)
+│       ├── contexts/          # Theme context
+│       ├── i18n/              # English & Chinese translations
+│       └── types/             # TypeScript interfaces
+│
+└── docker-compose.yml          # Container orchestration
 ```
-
-### Frontend (React + TypeScript)
-```
-frontend/
-├── src/
-│   ├── components/    # React components
-│   │   ├── OptionsChainTable/
-│   │   ├── OptionAnalysisCard/
-│   │   ├── CombinationAnalysisPanel/
-│   │   └── VolatilitySurfaceChart/
-│   ├── pages/         # Page components
-│   ├── services/      # API client
-│   ├── contexts/      # React contexts (Theme)
-│   ├── types/         # TypeScript types
-│   └── styles/        # Global styles, theme CSS
-└── tests/             # Vitest test suite
-```
-
----
-
-## 🧪 Testing
-
-### Backend Tests
-```bash
-cd backend
-pytest                    # Run all tests
-pytest --cov=app          # With coverage
-pytest -v                 # Verbose output
-pytest tests/test_pricing.py  # Specific file
-```
-
-**Test Coverage**: 132/134 tests passing (98.5%)
-
-### Frontend Tests
-```bash
-cd frontend
-npm test                  # Run all tests
-npm test -- --ui          # With UI
-npm test -- --coverage    # With coverage
-```
-
-**Note**: ECharts tests may fail in jsdom environment (expected) but work perfectly in browser.
 
 ---
 
 ## 📡 API Endpoints
 
 ### Options Data
-- `GET /api/options/{symbol}/chain` - Get options chain with filtering
-- `GET /api/analysis/volatility-surface/{symbol}` - Get IV surface data
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/options/{symbol}/chain` | Get options chain |
+| `GET` | `/api/options/{symbol}/expirations` | Get available expirations |
 
 ### Analysis
-- `POST /api/analysis/single` - Analyze single option
-- `POST /api/analysis/combination` - Analyze multi-leg strategy
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/analysis/single` | Analyze single option |
+| `POST` | `/api/analysis/combination` | Analyze multi-leg strategy |
+| `POST` | `/api/analysis/volatility-surface` | Get IV surface data |
+
+### Volatility
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/volatility/{symbol}/surface` | Get volatility surface |
+
+### Export
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/export/csv/analysis` | Export analysis to CSV |
+| `POST` | `/api/export/csv/strategy` | Export strategy to CSV |
 
 ### Watchlist
-- `GET /api/watchlist` - Get all watchlist items
-- `POST /api/watchlist` - Add item to watchlist
-- `DELETE /api/watchlist/{id}` - Remove item
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/watchlist` | Get all items |
+| `POST` | `/api/watchlist` | Add item |
+| `DELETE` | `/api/watchlist/{id}` | Remove item |
 
-### Documentation
-- `GET /docs` - Interactive API documentation (Swagger UI)
-- `GET /redoc` - Alternative API documentation
+---
+
+## 🧪 Testing
+
+### Backend
+```bash
+cd backend
+pytest                    # Run all tests
+pytest --cov=app          # With coverage
+pytest -v                 # Verbose
+```
+
+### Frontend
+```bash
+cd frontend
+npm test                  # Run all tests
+npm test -- --ui          # With Vitest UI
+npm test -- --coverage    # With coverage
+```
+
+---
+
+## 🎨 Tech Stack
+
+### Backend
+| Component | Technology |
+|-----------|------------|
+| Framework | FastAPI 0.109+ |
+| Pricing | py_vollib (Black-Scholes), QuantLib (Binomial) |
+| Data | yfinance |
+| Database | SQLite (SQLAlchemy) |
+| Validation | Pydantic v2 |
+| Testing | pytest, pytest-asyncio |
+
+### Frontend
+| Component | Technology |
+|-----------|------------|
+| Framework | React 19 |
+| Language | TypeScript 5.9 |
+| Build | Vite 7 |
+| Routing | React Router 7 |
+| State | Zustand |
+| Charts | ECharts 6 + echarts-gl |
+| Animation | Framer Motion |
+| HTTP | Axios |
+| Testing | Vitest, React Testing Library |
 
 ---
 
 ## ⚙️ Configuration
 
-### Environment Variables
-
-Create `.env` file in `backend/` directory:
+Create `.env` in `backend/`:
 
 ```env
-# Cache settings
 CACHE_TTL_SECONDS=300
-
-# Database
-DATABASE_URL=backend/data/cache.db
-
-# Data provider
+DATABASE_URL=backend/data/optionlab.db
 DATA_PROVIDER=yfinance
-
-# Logging
 LOG_LEVEL=INFO
-
-# Risk-free rate (annualized)
 RISK_FREE_RATE=0.05
 ```
-
-### Theme
-
-Theme preference is stored in browser localStorage and persists across sessions.
-
----
-
-## 🔬 Pricing Models
-
-### European Options (Black-Scholes)
-- Used for: Index options (SPX, VIX, etc.)
-- Library: `py_vollib`
-- Accuracy: Matches Hull textbook examples within 0.01%
-
-### American Options (CRR Binomial Tree)
-- Used for: Equity options (AAPL, TSLA, etc.)
-- Steps: 100 (configurable)
-- Early exercise: Properly handled
-
-### Auto-routing
-The platform automatically selects the appropriate pricing model based on the option's exercise style.
-
----
-
-## 📊 Data Sources
-
-### Market Data
-- **Provider**: yfinance (free, delayed data)
-- **Update Frequency**: 15-minute delay
-- **Caching**: 5-minute TTL to reduce API calls
-- **Coverage**: US equity options
-
-### Risk-Free Rate
-- Default: 5% annualized
-- Configurable via environment variable
-- Used for all pricing calculations
-
----
-
-## 🎨 Technology Stack
-
-### Backend
-- **Framework**: FastAPI 0.100+
-- **Pricing**: py_vollib (Black-Scholes), custom CRR binomial tree
-- **Data**: yfinance
-- **Database**: SQLite (caching, watchlist)
-- **Testing**: pytest, pytest-asyncio, pytest-cov
-
-### Frontend
-- **Framework**: React 19
-- **Language**: TypeScript 5.9
-- **Build**: Vite
-- **Charts**: ECharts 6.0 + echarts-gl (3D)
-- **Styling**: CSS Custom Properties (CSS Variables)
-- **Testing**: Vitest, React Testing Library
-
----
-
-## 🐛 Known Limitations
-
-1. **American Options**: py_vollib supports European only, so we use CRR binomial tree for American options
-2. **yfinance**: 15-minute delayed data, occasional rate limits (mitigated by caching)
-3. **Dividends**: Not yet implemented in pricing models
-4. **Complex Greeks**: Only first-order Greeks (no charm, vanna, etc.)
-
----
-
-## 🤝 Contributing
-
-This is currently a personal project. Contributions, issues, and feature requests are welcome!
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-**Commit Message Convention**: Use conventional commits (feat, fix, docs, style, refactor, test, chore)
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **py_vollib**: For accurate Black-Scholes implementation
-- **yfinance**: For free market data access
-- **ECharts**: For powerful, beautiful visualizations
-- **FastAPI**: For the excellent async web framework
-
----
-
-## 📧 Contact
-
-**Project Repository**: [https://github.com/StoneeeLU/OptionLab](https://github.com/StoneeeLU/OptionLab)
 
 ---
 
 ## 🗺️ Roadmap
 
-### Completed ✅
-- [x] Black-Scholes + CRR binomial pricing
-- [x] Greeks calculation
-- [x] Historical & implied volatility analysis
-- [x] Put-Call Parity checker
-- [x] Strategy recognition (6 strategies)
-- [x] P&L diagrams
-- [x] 3D volatility surface
-- [x] Dark/Light themes
-- [x] Options chain filtering
-- [x] Watchlist persistence
+<table>
+<tr>
+<td width="50%">
 
-### Upcoming 🚧
-- [ ] Export to CSV/PDF
-- [ ] Option history charts
-- [ ] Error boundaries and comprehensive error handling
-- [ ] Performance optimization (virtualization, code splitting)
-- [ ] Docker deployment
-- [ ] More strategies (ratio spreads, box spreads)
-- [ ] Dividend-adjusted pricing
-- [ ] Higher-order Greeks
-- [ ] Multi-exchange support
+### ✅ Completed
+
+| Status | Feature |
+|:------:|---------|
+| ✔️ | Black-Scholes + CRR Binomial pricing |
+| ✔️ | Greeks (Delta, Gamma, Theta, Vega, Rho) |
+| ✔️ | Historical & Implied Volatility |
+| ✔️ | IV Percentile |
+| ✔️ | Put-Call Parity checker |
+| ✔️ | Strategy recognition (6 strategies) |
+| ✔️ | P&L diagrams + breakeven analysis |
+| ✔️ | 3D Volatility Surface |
+| ✔️ | CSV Export |
+| ✔️ | Education Center (interactive) |
+| ✔️ | Bilingual support (EN/ZH) |
+| ✔️ | Dark/Light themes |
+| ✔️ | Watchlist persistence |
+| ✔️ | Docker deployment |
+
+</td>
+<td width="50%">
+
+### 🚧 Planned
+
+| Status | Feature |
+|:------:|---------|
+| ⏳ | PDF Export |
+| ⏳ | Option price history charts |
+| ⏳ | More strategies (ratio, box spreads) |
+| ⏳ | Dividend-adjusted pricing |
+| ⏳ | Higher-order Greeks (Charm, Vanna, Volga) |
+| ⏳ | Multi-exchange support |
+
+</td>
+</tr>
+</table>
 
 ---
 
-**Happy Trading! 📈**
+## 🤝 Contributing
 
-*Disclaimer: This tool is for educational and analysis purposes only. Not financial advice. Trade at your own risk.*
+```bash
+# Fork, then:
+git checkout -b feature/YourFeature
+git commit -m 'feat: add YourFeature'
+git push origin feature/YourFeature
+# Open Pull Request
+```
+
+**Commit Convention**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+---
+
+## 📝 License
+
+MIT License - see [LICENSE](LICENSE)
+
+---
+
+<div align="center">
+
+**[GitHub](https://github.com/StoneeeLU/OptionLab)**
+
+<br />
+
+*For educational and analysis purposes only. Not financial advice.*
+
+</div>
