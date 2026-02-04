@@ -16,6 +16,8 @@ type GreekDetail = {
     range: string
     interpretation: string[]
     tradingTips: string[]
+    workedExample: string
+    realWorldApplication: string
   }
   zh: {
     name: string
@@ -24,6 +26,8 @@ type GreekDetail = {
     range: string
     interpretation: string[]
     tradingTips: string[]
+    workedExample: string
+    realWorldApplication: string
   }
 }
 
@@ -48,6 +52,8 @@ const GREEKS: GreekDetail[] = [
         'Delta-neutral strategies hedge directional risk',
         'Higher Delta = more aggressive directional bet',
       ],
+      workedExample: 'If AAPL is at $150 and your call has Delta 0.65, a $2 move means you gain $130 (0.65 × $2 × 100).',
+      realWorldApplication: 'Used for position sizing and managing directional exposure. A Delta of 0.65 means the option behaves like 65 shares of the underlying stock.',
     },
     zh: {
       name: 'Delta',
@@ -66,6 +72,8 @@ const GREEKS: GreekDetail[] = [
         'Delta 中性策略可对冲方向风险',
         '更高的 Delta = 更激进的方向押注',
       ],
+      workedExample: '如果 AAPL 股价为 $150，你持有一份 Delta 为 0.65 的认购期权。如果股价上涨 $2，你的收益约为 $130 (0.65 × $2 × 100)。',
+      realWorldApplication: '用于仓位控制和管理方向性风险。0.65 的 Delta 意味着该期权的走势类似于持仓 65 股标的股票。',
     },
   },
   {
@@ -88,6 +96,8 @@ const GREEKS: GreekDetail[] = [
         'Gamma risk is biggest near expiration',
         'Scalpers love high Gamma; sellers fear it',
       ],
+      workedExample: 'If an option has Delta 0.50 and Gamma 0.05, a $1 increase in the stock price will increase the Delta to 0.55.',
+      realWorldApplication: 'Measures the "acceleration" of your position. High Gamma means your risk profile (Delta) changes rapidly, especially critical near expiration for At-The-Money options.',
     },
     zh: {
       name: 'Gamma',
@@ -106,6 +116,8 @@ const GREEKS: GreekDetail[] = [
         '临近到期时 Gamma 风险最大',
         '短线交易者喜欢高 Gamma；卖方则惧怕它',
       ],
+      workedExample: '如果某期权的 Delta 为 0.50，Gamma 为 0.05。如果股价上涨 $1，Delta 将增加到 0.55。',
+      realWorldApplication: '衡量仓位的“加速度”。高 Gamma 意味着你的风险敞口（Delta）变化非常快，在临近到期且处于平值（ATM）状态时尤为关键。',
     },
   },
   {
@@ -128,6 +140,8 @@ const GREEKS: GreekDetail[] = [
         'Option sellers profit from Theta decay',
         'Avoid holding long options through weekends if Theta is high',
       ],
+      workedExample: 'If an option is priced at $3.00 with a Theta of -0.05, and all other factors remain constant, the option will be worth $2.95 after one day.',
+      realWorldApplication: 'Central to income-generating strategies. Sellers look for high Theta decay to profit from time passing, while buyers must ensure their directional move happens fast enough to offset decay.',
     },
     zh: {
       name: 'Theta',
@@ -146,6 +160,8 @@ const GREEKS: GreekDetail[] = [
         '期权卖方从 Theta 衰减中获利',
         'Theta 高时避免持仓过周末',
       ],
+      workedExample: '如果期权价格为 $3.00，Theta 为 -0.05。在其他因素不变的情况下，一天后该期权的价值将变为 $2.95。',
+      realWorldApplication: '收益型策略的核心。卖方利用高 Theta 衰减通过时间流逝获利，而买方必须确保方向性预测能快速兑现，以抵消时间价值的流失。',
     },
   },
   {
@@ -168,6 +184,8 @@ const GREEKS: GreekDetail[] = [
         'Sell options when IV is high (expensive Vega)',
         'Straddles/strangles are Vega plays',
       ],
+      workedExample: 'If an option is priced at $5.00 with a Vega of 0.20, and the implied volatility rises by 1%, the option price will increase to $5.20.',
+      realWorldApplication: 'Vital for trading volatility. Used to play earnings events (where IV often drops sharply after the announcement) or to hedge against market uncertainty.',
     },
     zh: {
       name: 'Vega',
@@ -186,6 +204,8 @@ const GREEKS: GreekDetail[] = [
         'IV 高时卖出期权（昂贵的 Vega）',
         '跨式/宽跨式是 Vega 策略',
       ],
+      workedExample: '如果期权价格为 $5.00，Vega 为 0.20。如果隐含波动率（IV）上升 1%，期权价格将上涨至 $5.20。',
+      realWorldApplication: '波动率交易的关键指标。用于参与财报行情（财报后 IV 通常会骤降）或对冲市场不确定性带来的风险。',
     },
   },
   {
@@ -208,6 +228,8 @@ const GREEKS: GreekDetail[] = [
         'Consider Rho for LEAPS in changing rate environments',
         'Rate changes rarely move options significantly',
       ],
+      workedExample: 'If a call option is priced at $2.00 with a Rho of 0.03, and interest rates rise by 1%, the option price will increase to $2.03.',
+      realWorldApplication: 'Measures sensitivity to interest rate changes. While minor for short-term options, it becomes significant for long-term LEAPS (Long-term Equity Anticipation Securities).',
     },
     zh: {
       name: 'Rho',
@@ -226,6 +248,8 @@ const GREEKS: GreekDetail[] = [
         '利率环境变化时关注 LEAPS 的 Rho',
         '利率变化很少显著影响期权价格',
       ],
+      workedExample: '如果一份看涨期权价格为 $2.00，Rho 为 0.03。如果利率上升 1%，期权价格将上涨至 $2.03。',
+      realWorldApplication: '衡量对利率变化的敏感度。虽然对短期期权影响较小，但对于长期期权（LEAPS）来说非常重要。',
     },
   },
 ]
@@ -317,6 +341,18 @@ export function GreeksChapter() {
                     <li key={i}>{tip}</li>
                   ))}
                 </ul>
+              </div>
+
+              <div className="greek-content-section">
+                <h4>{language === 'zh' ? '计算示例' : 'Worked Example'}</h4>
+                <div className="greek-example-box">
+                  <p>{data.workedExample}</p>
+                </div>
+              </div>
+
+              <div className="greek-content-section">
+                <h4>{language === 'zh' ? '实际应用' : 'Real-world Application'}</h4>
+                <p>{data.realWorldApplication}</p>
               </div>
             </section>
           )

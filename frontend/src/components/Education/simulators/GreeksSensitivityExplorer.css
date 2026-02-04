@@ -1,0 +1,191 @@
+.greeks-explorer {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 800px; /* Optional constraint */
+  margin: 0 auto;
+}
+
+.greeks-explorer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.greeks-explorer-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.greeks-explorer-header .subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.type-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-fast) ease;
+    font-weight: 500;
+}
+
+.toggle-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.toggle-btn.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.greeks-explorer-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.greeks-explorer-inputs {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Reusing input-row style from OptionCalculator, but ensuring scope */
+.greeks-explorer .input-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 80px;
+  gap: 1rem;
+  align-items: center;
+}
+
+.greeks-explorer .input-row label {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.greeks-explorer .input-row input[type='range'] {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 4px;
+  width: 100%;
+}
+
+.greeks-explorer .input-row input[type='range']::-webkit-slider-runnable-track {
+  background: var(--color-border);
+  height: 4px;
+  border-radius: 999px;
+}
+
+.greeks-explorer .input-row input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  margin-top: -6px;
+  background: var(--color-primary);
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast) ease;
+}
+
+.greeks-explorer .input-row input[type='range']:focus::-webkit-slider-thumb,
+.greeks-explorer .input-row input[type='range']:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
+  background: var(--color-primary-light);
+}
+
+.greeks-explorer .input-row input[type='number'] {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--transition-fast) ease;
+}
+
+.greeks-explorer .input-row input[type='number']:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.greeks-explorer-results {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--color-surface), transparent 50%);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.greek-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 80px;
+  gap: 1rem;
+  align-items: center;
+}
+
+.greek-label {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.greek-bar-container {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.greek-bar-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 4px;
+    min-width: 2px;
+}
+
+.greek-bar-fill.negative {
+    background: #ef4444; /* Tailwind red-500 roughly */
+}
+
+.greek-bar-fill.positive {
+    background: #22c55e; /* Tailwind green-500 roughly */
+}
+
+.greek-value {
+    text-align: right;
+    font-family: monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .greeks-explorer-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .greeks-explorer .input-row {
+      grid-template-columns: 1fr;
+  }
+  
+  .greek-row {
+      grid-template-columns: 80px 1fr 70px;
+  }
+}

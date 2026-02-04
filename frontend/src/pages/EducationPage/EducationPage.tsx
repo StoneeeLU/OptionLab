@@ -4,7 +4,8 @@ import { AnimatedContainer } from '../../components/common/AnimatedContainer'
 import { GlassPanel } from '../../components/common/GlassPanel'
 import { Glossary } from '../../components/Education/Glossary'
 import { Quiz } from '../../components/Education/Quiz'
-import { OptionCalculator, StrategyBuilder, TimeDecayDemo } from '../../components/Education/simulators'
+import { OptionCalculator, StrategyBuilder, TimeDecayDemo, GreeksSensitivityExplorer } from '../../components/Education/simulators'
+import { IVSmileChart } from '../../components/Education/charts'
 import { BasicsChapter } from '../../components/Education/chapters/BasicsChapter'
 import { PricingChapter } from '../../components/Education/chapters/PricingChapter'
 import { GreeksChapter } from '../../components/Education/chapters/GreeksChapter'
@@ -126,6 +127,7 @@ function EducationPageInner() {
               >
                 <div className="education-section">
                   <GreeksChapter />
+                  <GreeksSensitivityExplorer />
                   <Quiz chapterId="greeks" />
                 </div>
               </motion.section>
@@ -143,6 +145,7 @@ function EducationPageInner() {
               >
                 <div className="education-section">
                   <IVChapter />
+                  <IVSmileChart />
                   <Quiz chapterId="iv" />
                 </div>
               </motion.section>
