@@ -323,6 +323,110 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Pricing Chapter Styles */
+.education-value-breakdown {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface), transparent 60%);
+}
+
+.education-example-box,
+.greek-example-box {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface), transparent 50%);
+  margin-top: 16px;
+}
+
+.education-example-box h4,
+.greek-example-box h4 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.greek-example-box ul {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.greek-example-box li {
+  margin-bottom: 6px;
+  color: var(--color-text-secondary);
+}
+
+.greek-example-box p {
+  margin: 12px 0;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.example-item {
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--color-border), transparent 30%);
+  background: color-mix(in srgb, var(--color-surface), transparent 40%);
+}
+
+.example-item strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.example-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.education-drivers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.driver-card {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface), transparent 55%);
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease,
+    border-color var(--transition-fast) ease;
+}
+
+.driver-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-primary), transparent 50%);
+}
+
+.driver-card h4 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.driver-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
 .education-section-panel {
   padding: 24px;
 }
