@@ -483,6 +483,12 @@ export function Quiz({ chapterId }: QuizProps) {
     }
   }
 
+  function restart() {
+    setIndex(0)
+    setAnswers({})
+    setLastChoice(null)
+  }
+
   return (
     <GlassPanel variant="subtle" className="quiz" data-testid="quiz">
       <header className="quiz-header">
@@ -596,15 +602,25 @@ export function Quiz({ chapterId }: QuizProps) {
                       {language === 'zh' ? '下一题' : 'Next'}
                     </button>
                   ) : (
-                    <button
-                      type="button"
-                      data-testid="quiz-finish"
-                      className="quiz-next"
-                      onClick={finalize}
-                      disabled={!completed}
-                    >
-                      {language === 'zh' ? '完成并保存' : 'Finish & Save'}
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        data-testid="quiz-finish"
+                        className="quiz-next"
+                        onClick={finalize}
+                        disabled={!completed}
+                      >
+                        {language === 'zh' ? '完成并保存' : 'Finish & Save'}
+                      </button>
+                      <button
+                        type="button"
+                        data-testid="quiz-restart"
+                        className="quiz-restart"
+                        onClick={restart}
+                      >
+                        {language === 'zh' ? '重做' : 'Restart'}
+                      </button>
+                    </>
                   )}
                 </div>
               </motion.div>

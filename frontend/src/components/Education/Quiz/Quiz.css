@@ -121,6 +121,7 @@
 .quiz-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .quiz-next {
@@ -136,5 +137,22 @@
 .quiz-next:hover {
   border-color: color-mix(in srgb, var(--color-primary), transparent 35%);
   background: color-mix(in srgb, var(--color-primary-light), transparent 20%);
+  transform: translateY(-1px);
+}
+
+.quiz-restart {
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  transition: transform var(--transition-fast) ease, border-color var(--transition-fast) ease,
+    background var(--transition-fast) ease;
+}
+
+.quiz-restart:hover {
+  border-color: color-mix(in srgb, var(--color-warning), transparent 35%);
+  background: color-mix(in srgb, var(--color-warning), transparent 85%);
+  color: var(--color-text);
   transform: translateY(-1px);
 }
