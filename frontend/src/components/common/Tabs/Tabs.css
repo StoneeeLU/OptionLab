@@ -1,0 +1,74 @@
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Allow horizontal layout override */
+.tabs-container.education-tabs-layout {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.tab-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px; /* for focus ring/shadow visibility */
+  scrollbar-width: none;
+}
+
+.tab-list::-webkit-scrollbar {
+  display: none;
+}
+
+.education-tab {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.education-tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.education-tab.active {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: white;
+}
+
+.education-tab:hover:not(.active):not(:disabled) {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary-light), transparent 30%);
+}
+
+.education-tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tab-panel {
+  width: 100%;
+  outline: none;
+}
+
+/* Responsive: stack vertically on mobile */
+@media (max-width: 900px) {
+  .tabs-container.education-tabs-layout {
+    flex-direction: column;
+  }
+}

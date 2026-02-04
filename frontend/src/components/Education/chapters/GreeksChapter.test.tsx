@@ -22,9 +22,9 @@ describe('GreeksChapter', () => {
     )
 
     expect(screen.getByRole('heading', { level: 2, name: /greeks/i })).toBeInTheDocument()
-    expect(screen.getByTestId('greeks-list')).toBeInTheDocument()
+    // Each Greek has a detailed section with greek-detail-{id} testid
     ;['delta', 'gamma', 'theta', 'vega', 'rho'].forEach((id) => {
-      expect(screen.getByTestId(`greek-${id}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`greek-detail-${id}`)).toBeInTheDocument()
     })
   })
 

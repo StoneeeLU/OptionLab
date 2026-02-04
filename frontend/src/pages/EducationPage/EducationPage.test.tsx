@@ -16,33 +16,31 @@ describe('EducationPage', () => {
     expect(screen.getByTestId('language-toggle')).toBeInTheDocument()
   })
 
-  it('renders a sticky nav with anchor links and matching sections', () => {
+  it('renders tab-based navigation with chapter tabs', () => {
     render(
       <MemoryRouter>
         <EducationPage />
       </MemoryRouter>,
     )
 
-    const nav = screen.getByRole('navigation', { name: /chapters/i })
-    const links = within(nav).getAllByRole('link')
-    const ids = ['basics', 'pricing', 'greeks', 'iv', 'strategies']
+    // Now uses tablist instead of navigation with anchor links
+    const tablist = screen.getByRole('tablist', { name: /education chapters/i })
+    const tabs = within(tablist).getAllByRole('tab')
+    const tabNames = ['Basics', 'Pricing', 'Greeks', 'IV', 'Strategies']
 
-    expect(links).toHaveLength(ids.length)
+    expect(tabs).toHaveLength(tabNames.length)
 
-    links.forEach((link, index) => {
-      expect(link).toHaveAttribute('href', `#${ids[index]}`)
+    tabs.forEach((tab, index) => {
+      expect(tab).toHaveTextContent(tabNames[index])
     })
 
-    ids.forEach((id) => {
-      expect(document.getElementById(id)).toBeInTheDocument()
-    })
+    // First tab should be selected by default
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
 
-    expect(screen.getByTestId('section-basics')).toBeInTheDocument()
-    expect(screen.getByTestId('section-pricing')).toBeInTheDocument()
-    expect(screen.getByTestId('section-greeks')).toBeInTheDocument()
-    expect(screen.getByTestId('section-iv')).toBeInTheDocument()
-    expect(screen.getByTestId('section-strategies')).toBeInTheDocument()
-
+    // Progress indicator should be present
     expect(screen.getByTestId('education-progress')).toBeInTheDocument()
+
+    // Sidebar should be present
+    expect(screen.getByTestId('education-sidebar')).toBeInTheDocument()
   })
 })
