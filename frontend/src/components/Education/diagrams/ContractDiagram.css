@@ -1,0 +1,132 @@
+.contract-diagram-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-secondary, #f8f9fa);
+  border-radius: 12px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* The Ticket Visual */
+.contract-ticket {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  cursor: default;
+}
+
+.contract-header {
+  background: #3b82f6;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.contract-header.put {
+  background: #ef4444;
+}
+
+.contract-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px; /* Gap for border effect */
+  background: #e2e8f0; /* Color of the gap lines */
+  padding: 1px; /* Outer border */
+}
+
+.contract-section {
+  background: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.contract-section:hover,
+.contract-section.active {
+  background: #eff6ff;
+}
+
+.contract-section.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid #3b82f6;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.section-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Full width sections */
+.contract-section.full-width {
+  grid-column: span 2;
+}
+
+/* Info Panel below the ticket */
+.info-panel {
+  width: 100%;
+  max-width: 500px;
+  min-height: 100px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.info-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #3b82f6;
+}
+
+.info-description {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.info-placeholder {
+  color: #94a3b8;
+  text-align: center;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+/* Dark mode adjustments (simple/naive for now, assuming standard var names if they exist, otherwise just fallbacks) */
+@media (prefers-color-scheme: dark) {
+  /* Only apply if the app supports dark mode classes, but here we use media query for safety */
+  /* If the app uses a class like .dark-mode, we would use that instead. */
+}

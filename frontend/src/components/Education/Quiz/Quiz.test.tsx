@@ -52,6 +52,21 @@ describe('Quiz', () => {
     // Q3 - Wait for prompt
     await screen.findByText(/option seller, the key is/i)
     fireEvent.click(screen.getByTestId('quiz-choice-0'))
+    fireEvent.click(await screen.findByTestId('quiz-next'))
+
+    // Q4
+    await screen.findByText(/exercise a call option/i)
+    fireEvent.click(screen.getByTestId('quiz-choice-0'))
+    fireEvent.click(await screen.findByTestId('quiz-next'))
+
+    // Q5
+    await screen.findByText(/In-the-Money/i)
+    fireEvent.click(screen.getByTestId('quiz-choice-0'))
+    fireEvent.click(await screen.findByTestId('quiz-next'))
+
+    // Q6
+    await screen.findByText(/right \(but not obligation\)/i)
+    fireEvent.click(screen.getByTestId('quiz-choice-0'))
     
     // Wait for finish button
     const finish = await screen.findByTestId('quiz-finish')
