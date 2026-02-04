@@ -3,7 +3,7 @@ import { useReducedMotion, useScroll, useSpring, useTransform, motion, AnimatePr
 import { AnimatedContainer } from '../../components/common/AnimatedContainer'
 import { GlassPanel } from '../../components/common/GlassPanel'
 import { Quiz } from '../../components/Education/Quiz'
-import { OptionCalculator, StrategyBuilder, TimeDecayDemo, GreeksSensitivityExplorer } from '../../components/Education/simulators'
+import { OptionCalculator, TimeDecayDemo, GreeksSensitivityExplorer } from '../../components/Education/simulators'
 import { IVSmileChart } from '../../components/Education/charts'
 import { BasicsChapter } from '../../components/Education/chapters/BasicsChapter'
 import { PricingChapter } from '../../components/Education/chapters/PricingChapter'
@@ -216,7 +216,6 @@ function EducationPageInner() {
               >
                 <div className="education-section">
                   <StrategiesChapter />
-                  <StrategyBuilder />
                   <Quiz chapterId="strategies" />
                 </div>
               </motion.section>

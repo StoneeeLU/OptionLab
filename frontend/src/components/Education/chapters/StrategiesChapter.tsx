@@ -107,14 +107,7 @@ export function StrategiesChapter() {
           </div>
         </section>
 
-        <section aria-label={language === 'zh' ? '构建器预留' : 'Builder placeholder'}>
-          <h3>{language === 'zh' ? '构建器预留' : 'Builder placeholder'}</h3>
-          <div className="education-placeholder" data-testid="strategies-builder-placeholder">
-            {language === 'zh'
-              ? '后续任务将嵌入多腿策略构建器。'
-              : 'Later tasks will embed the multi-leg strategy builder here.'}
-          </div>
-        </section>
+        {/* Strategy Builder is now provided by StrategyBuilder component on EducationPage */}
       </div>
 
       <footer className="education-chapter-footer">
