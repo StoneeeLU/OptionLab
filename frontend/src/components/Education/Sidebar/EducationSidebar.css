@@ -1,6 +1,7 @@
 .education-sidebar {
   width: 280px;
   flex: 0 0 280px;
+  min-height: 100%;
 }
 
 .education-sidebar-card {
@@ -171,15 +172,19 @@
   .education-sidebar {
     width: 100%;
     flex: 0 0 auto;
+    min-height: auto;
   }
 
   .education-sidebar-card {
     position: sticky;
-    top: 12px;
+    top: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    background: color-mix(in srgb, var(--color-surface), transparent 5%);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   }
 
   .education-sidebar-progress {

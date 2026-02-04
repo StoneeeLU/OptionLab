@@ -7,7 +7,7 @@
 
 .education-layout {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 20px;
 }
 
@@ -34,8 +34,8 @@
     radial-gradient(120px 120px at 15% 35%, color-mix(in srgb, var(--color-primary), transparent 60%) 0%, transparent 70%),
     radial-gradient(160px 160px at 80% 20%, color-mix(in srgb, var(--color-success), transparent 65%) 0%, transparent 68%),
     radial-gradient(220px 220px at 70% 85%, color-mix(in srgb, var(--color-warning), transparent 75%) 0%, transparent 65%);
-  filter: blur(10px) saturate(1.25);
-  opacity: 0.9;
+  filter: blur(40px) saturate(1.2);
+  opacity: 0.6;
   transform: translateZ(0);
 }
 
@@ -50,12 +50,14 @@
 }
 
 .education-hero-text h1 {
-  margin: 0 0 8px;
+  margin: 0 0 12px;
+  line-height: 1.2;
 }
 
 .education-hero-text .subtitle {
   margin: 0;
   color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
 
@@ -63,7 +65,7 @@
 .education-sections {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 32px;
 }
 
 .education-section {
@@ -72,21 +74,32 @@
 }
 
 .education-chapter {
-  padding: 18px;
+  padding: 24px;
 }
 
 .education-chapter .subtitle {
   color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
 .education-chapter-content {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   margin-top: 12px;
 }
 
 .education-chapter-content h3 {
-  margin: 0 0 6px;
+  margin: 24px 0 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.education-chapter-content p {
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+  font-size: 1rem;
 }
 
 .education-placeholder {
@@ -168,7 +181,7 @@
 }
 
 .education-section-panel {
-  padding: 20px;
+  padding: 24px;
 }
 
 .education-section-panel h2 {
@@ -180,18 +193,26 @@
   color: var(--text-muted, #6b7280);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .education-page {
     padding: 16px;
     gap: 16px;
   }
 
-  .education-hero {
-    padding: 20px;
+  .education-hero,
+  .education-chapter,
+  .education-section-panel {
+    padding: 16px;
   }
 
   .education-layout {
     flex-direction: column;
+  }
+
+  .education-sidebar-card {
+    position: sticky;
+    top: 16px;
+    z-index: 10;
   }
 
   .education-chapter-footer {
