@@ -43,6 +43,10 @@ htmlcov/
 .dmypy.json
 dmypy.json
 
+# Unignore frontend lib
+!frontend/src/lib/
+
+
 # Database
 *.db
 *.sqlite
