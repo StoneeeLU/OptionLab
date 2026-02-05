@@ -1,5 +1,6 @@
 """Tests for data provider interface and yfinance implementation."""
 import sys
+import os
 from pathlib import Path
 from datetime import date
 from unittest.mock import Mock, patch
@@ -18,6 +19,33 @@ def test_data_provider_protocol():
     assert hasattr(DataProvider, 'get_option_chain')
     assert hasattr(DataProvider, 'get_spot_price')
     assert hasattr(DataProvider, 'get_historical_prices')
+
+
+def test_get_data_provider_yfinance(monkeypatch):
+    """Test that yfinance provider is correctly wired."""
+    from app.api.options import get_data_provider
+    from app.core.config import get_settings
+    from app.services.cache.cached_provider import CachedDataProvider
+    from app.services.providers.yfinance_provider import YFinanceProvider
+    
+    monkeypatch.setenv("DATA_PROVIDER", "yfinance")
+    get_settings.cache_clear()
+    
+    provider = get_data_provider()
+    assert isinstance(provider, CachedDataProvider)
+    assert isinstance(provider.provider, YFinanceProvider)
+
+
+def test_get_data_provider_invalid(monkeypatch):
+    """Test that invalid provider raises ValueError."""
+    from app.api.options import get_data_provider
+    from app.core.config import get_settings
+    
+    monkeypatch.setenv("DATA_PROVIDER", "invalid_provider")
+    get_settings.cache_clear()
+    
+    with pytest.raises(ValueError, match="Unsupported DATA_PROVIDER"):
+        get_data_provider()
 
 
 def test_yfinance_provider_instantiation():
@@ -137,9 +165,42 @@ def test_yfinance_handles_missing_data(mock_ticker):
         provider.get_spot_price("INVALID")
 
 
+@patch('yfinance.Ticker')
+def test_provider_integration_mocked(mock_ticker, monkeypatch):
+    """Integration test for the provider stack with mocked network."""
+    from app.api.options import get_data_provider
+    from app.core.config import get_settings
+    from app.services.cache.cached_provider import CachedDataProvider
+    
+    # Ensure yfinance is selected
+    monkeypatch.setenv("DATA_PROVIDER", "yfinance")
+    get_settings.cache_clear()
+    
+    # Mock yfinance response
+    mock_ticker_instance = Mock()
+    mock_ticker_instance.info = {'currentPrice': 150.0}
+    mock_ticker.return_value = mock_ticker_instance
+    
+    # Get provider via wiring
+    provider = get_data_provider()
+    assert isinstance(provider, CachedDataProvider)
+
+    # Ensure we hit the underlying provider (not a persisted SQLite cache).
+    # CachedDataProvider stores spot prices in backend/data/cache.db with a short TTL,
+    # which may be populated by other tests.
+    provider.cache.invalidate(provider._make_key("spot", "AAPL"))
+    
+    # Test execution through the stack (API -> Cache -> Provider -> Mock)
+    price = provider.get_spot_price("AAPL")
+    
+    assert price == 150.0
+    mock_ticker.assert_called_with("AAPL")
+
+
 def test_yfinance_integration_real_data():
-    """Integration test with real yfinance data (slow, may be skipped in CI)."""
-    pytest.skip("Skipping live yfinance test - use for manual verification only")
+    """Integration test with real yfinance data (slow, skipped by default)."""
+    if not os.environ.get("RUN_LIVE_TESTS"):
+        pytest.skip("Skipping live yfinance test - set RUN_LIVE_TESTS=1 to enable")
     
     from app.services.providers.yfinance_provider import YFinanceProvider
     
