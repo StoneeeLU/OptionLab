@@ -2,31 +2,17 @@ import { useState, useEffect } from 'react'
 import { motion, useSpring, useTransform, useMotionValue, useReducedMotion } from 'framer-motion'
 import { useEducationProgress } from '../../../hooks/useEducationProgress'
 import { useI18n } from '../../../i18n/I18nContext'
+import { CHAPTERS, type ChapterId } from '../../../constants/education'
 import './EducationSidebar.css'
 
 // Icons
-import basicsIcon from '../../../assets/education/basics-icon.svg'
 import chapterCompleteIcon from '../../../assets/education/chapter-complete.svg'
-import greeksIcon from '../../../assets/education/greeks-icon.svg'
-import ivIcon from '../../../assets/education/iv-icon.svg'
-import pricingIcon from '../../../assets/education/pricing-icon.svg'
 import progressBadge from '../../../assets/education/progress-badge.svg'
-import strategiesIcon from '../../../assets/education/strategies-icon.svg'
-
-export const CHAPTERS = [
-  { id: 'basics', icon: basicsIcon },
-  { id: 'pricing', icon: pricingIcon },
-  { id: 'greeks', icon: greeksIcon },
-  { id: 'iv', icon: ivIcon },
-  { id: 'strategies', icon: strategiesIcon },
-] as const
-
-export type ChapterId = (typeof CHAPTERS)[number]['id']
 
 interface EducationSidebarProps {
   className?: string
-  activeId: string
-  onNavigate: (id: string) => void
+  activeId: ChapterId
+  onNavigate: (id: ChapterId) => void
 }
 
 export function EducationSidebar({ 
@@ -59,7 +45,7 @@ export function EducationSidebar({
 
   const isCompleted = (id: string) => progress.completedChapters.includes(id)
 
-  const handleChapterClick = (e: React.MouseEvent, id: string) => {
+  const handleChapterClick = (e: React.MouseEvent, id: ChapterId) => {
     e.preventDefault()
     
     // Close mobile menu on selection

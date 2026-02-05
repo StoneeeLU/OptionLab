@@ -2,21 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { useEducationProgress } from '../../../hooks/useEducationProgress'
+import { CHAPTERS } from '../../../constants/education'
 import chapterCompleteIcon from '../../../assets/education/chapter-complete.svg'
 import './ChapterNav.css'
-
-type Chapter = {
-  id: string
-  label: string
-}
-
-const CHAPTERS: Chapter[] = [
-  { id: 'basics', label: 'Basics' },
-  { id: 'pricing', label: 'Pricing' },
-  { id: 'greeks', label: 'Greeks' },
-  { id: 'iv', label: 'IV' },
-  { id: 'strategies', label: 'Strategies' },
-]
 
 function getHashId(): string {
   const raw = window.location.hash
