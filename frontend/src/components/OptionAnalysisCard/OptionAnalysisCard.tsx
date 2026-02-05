@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { OptionAnalysis } from '../../types';
 import { GlassPanel } from '../common/GlassPanel';
 import './OptionAnalysisCard.css';
@@ -6,7 +7,7 @@ interface OptionAnalysisCardProps {
   analysis: OptionAnalysis;
 }
 
-export function OptionAnalysisCard({ analysis }: OptionAnalysisCardProps) {
+export const OptionAnalysisCard = memo(function OptionAnalysisCard({ analysis }: OptionAnalysisCardProps) {
   const { option, greeks, theoretical_price, market_price, iv_percentile, historical_volatility, mispricing, valuation } = analysis;
 
   const formatPercent = (value: number): string => {
@@ -118,4 +119,4 @@ export function OptionAnalysisCard({ analysis }: OptionAnalysisCardProps) {
       </div>
     </GlassPanel>
   );
-}
+});

@@ -33,6 +33,7 @@ export function OptionsChainTable({
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [activeTooltip, setActiveTooltip] = useState<ActiveTooltipState | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const analyzeTimeoutRef = useRef<number | null>(null);
   
   const { analyze, data: analysisData, loading: analysisLoading, error: analysisError } = useOptionAnalysis();
 
@@ -40,10 +41,19 @@ export function OptionsChainTable({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setActiveTooltip(null);
+        if (analyzeTimeoutRef.current) {
+          window.clearTimeout(analyzeTimeoutRef.current);
+          analyzeTimeoutRef.current = null;
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (analyzeTimeoutRef.current) {
+        window.clearTimeout(analyzeTimeoutRef.current);
+      }
+    };
   }, []);
 
   const handleTooltipTrigger = (
@@ -57,6 +67,11 @@ export function OptionsChainTable({
       hideTimeoutRef.current = null;
     }
 
+    if (analyzeTimeoutRef.current) {
+      window.clearTimeout(analyzeTimeoutRef.current);
+      analyzeTimeoutRef.current = null;
+    }
+
     const target = event.currentTarget as HTMLElement;
     setActiveTooltip({
       type: option.option_type,
@@ -64,26 +79,33 @@ export function OptionsChainTable({
       anchorRect: target.getBoundingClientRect(),
     });
 
-    analyze({
-      symbol: option.symbol,
-      strike: option.strike,
-      expiry: option.expiry,
-      option_type: option.option_type,
-      exercise_style: 'american', // Assuming equity options default to American
-      bid: option.bid,
-      ask: option.ask,
-      last: option.last,
-      volume: option.volume,
-      open_interest: option.open_interest,
-      implied_volatility: option.implied_volatility,
-      spot_price: spotPrice,
-      risk_free_rate: 0.05,
-    });
+    analyzeTimeoutRef.current = window.setTimeout(() => {
+      analyze({
+        symbol: option.symbol,
+        strike: option.strike,
+        expiry: option.expiry,
+        option_type: option.option_type,
+        exercise_style: 'american', // Assuming equity options default to American
+        bid: option.bid,
+        ask: option.ask,
+        last: option.last,
+        volume: option.volume,
+        open_interest: option.open_interest,
+        implied_volatility: option.implied_volatility,
+        spot_price: spotPrice,
+        risk_free_rate: 0.05,
+      });
+      analyzeTimeoutRef.current = null;
+    }, 300);
   };
 
   const handleTooltipHide = () => {
     if (hideTimeoutRef.current) {
       window.clearTimeout(hideTimeoutRef.current);
+    }
+    if (analyzeTimeoutRef.current) {
+      window.clearTimeout(analyzeTimeoutRef.current);
+      analyzeTimeoutRef.current = null;
     }
     hideTimeoutRef.current = window.setTimeout(() => {
       setActiveTooltip(null);

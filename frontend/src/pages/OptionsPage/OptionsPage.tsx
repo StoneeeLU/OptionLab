@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { OptionsChainTable } from '../../components/OptionsChainTable';
@@ -29,7 +29,7 @@ export function OptionsPage() {
   const lastLoadedSymbolRef = useRef<string>('');
   const expirationTabsRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSymbolSearch = async (searchSymbol: string) => {
+  const handleSymbolSearch = useCallback(async (searchSymbol: string) => {
     if (!searchSymbol.trim()) return
 
     setLoading(true)
@@ -57,9 +57,9 @@ export function OptionsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const handleExpirySelect = async (expiry: string) => {
+  const handleExpirySelect = useCallback(async (expiry: string) => {
     const symbol = lastLoadedSymbolRef.current
     if (!symbol) return
     if (!expiry) return
@@ -85,9 +85,9 @@ export function OptionsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [loading, selectedExpiry])
 
-  const handleAdjacentExpiry = (direction: -1 | 1) => {
+  const handleAdjacentExpiry = useCallback((direction: -1 | 1) => {
     if (!optionChain) return
     if (loading) return
     if (optionChain.expiration_dates.length === 0) return
@@ -98,7 +98,7 @@ export function OptionsPage() {
     if (next < 0 || next >= optionChain.expiration_dates.length) return
 
     void handleExpirySelect(optionChain.expiration_dates[next])
-  }
+  }, [handleExpirySelect, loading, optionChain, selectedExpiry])
 
   // Keep the active expiry visible (even with hidden scrollbars)
   useEffect(() => {
@@ -120,9 +120,9 @@ export function OptionsPage() {
 
     setInputValue(upper);
     void handleSymbolSearch(upper);
-  }, [location.search]);
+  }, [location.search, handleSymbolSearch]);
 
-  const handleSelectionChange = async (selectedOptions: Option[]) => {
+  const handleSelectionChange = useCallback(async (selectedOptions: Option[]) => {
     if (!optionChain) return
     if (selectedOptions.length === 0) return
 
@@ -158,12 +158,36 @@ export function OptionsPage() {
     } finally {
       setAnalysisLoading(false)
     }
-  }
+  }, [optionChain])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     void handleSymbolSearch(inputValue);
-  };
+  }, [inputValue, handleSymbolSearch]);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value.toUpperCase());
+  }, []);
+
+  const handlePrevExpiry = useCallback(() => {
+    handleAdjacentExpiry(-1);
+  }, [handleAdjacentExpiry]);
+
+  const handleNextExpiry = useCallback(() => {
+    handleAdjacentExpiry(1);
+  }, [handleAdjacentExpiry]);
+
+  const handleMoneynessChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setMoneynessFilter(e.target.value);
+  }, []);
+
+  const handleMinVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinVolume(Number(e.target.value));
+  }, []);
+
+  const handleMinOIChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinOI(Number(e.target.value));
+  }, []);
 
   // Filter options based on selected expiry and filters
   const filteredOptions = useMemo(() => {
@@ -216,7 +240,7 @@ export function OptionsPage() {
             type="text"
             placeholder="Enter symbol (e.g., AAPL)"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value.toUpperCase())}
+            onChange={handleInputChange}
             className="symbol-input"
           />
           <button type="submit" className="search-button">
@@ -256,7 +280,7 @@ export function OptionsPage() {
                   type="button"
                   className="expiry-nav-button"
                   aria-label="Previous expiration"
-                  onClick={() => handleAdjacentExpiry(-1)}
+                  onClick={handlePrevExpiry}
                   disabled={!hasChain || loading || optionChain.expiration_dates.indexOf(selectedExpiry) <= 0}
                 >
                   <ChevronLeft size={18} />
@@ -288,7 +312,7 @@ export function OptionsPage() {
                   type="button"
                   className="expiry-nav-button"
                   aria-label="Next expiration"
-                  onClick={() => handleAdjacentExpiry(1)}
+                  onClick={handleNextExpiry}
                   disabled={
                     !hasChain ||
                     loading ||
@@ -308,7 +332,7 @@ export function OptionsPage() {
                       <select
                         id="moneyness"
                         value={moneynessFilter}
-                        onChange={(e) => setMoneynessFilter(e.target.value)}
+                        onChange={handleMoneynessChange}
                       >
                         <option value="all">All</option>
                         <option value="itm">In The Money</option>
@@ -323,7 +347,7 @@ export function OptionsPage() {
                         type="number"
                         id="min-volume"
                         value={minVolume}
-                        onChange={(e) => setMinVolume(Number(e.target.value))}
+                        onChange={handleMinVolumeChange}
                         min="0"
                       />
                     </div>
@@ -334,7 +358,7 @@ export function OptionsPage() {
                         type="number"
                         id="min-oi"
                         value={minOI}
-                        onChange={(e) => setMinOI(Number(e.target.value))}
+                        onChange={handleMinOIChange}
                         min="0"
                       />
                     </div>

@@ -1,6 +1,10 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 
-import { VolatilitySurfaceChart } from '../../components/VolatilitySurfaceChart'
+const VolatilitySurfaceChart = lazy(() =>
+  import('../../components/VolatilitySurfaceChart/VolatilitySurfaceChart').then((m) => ({
+    default: m.VolatilitySurfaceChart,
+  }))
+)
 import { GlassPanel, Skeleton, AnimatedContainer } from '../../components/common'
 import { getVolatilitySurfaceForSymbol } from '../../services/api'
 import type { VolatilitySurfaceResponse } from '../../types'
@@ -83,7 +87,27 @@ export function VolatilitySurfacePage() {
             </div>
           </GlassPanel>
         ) : (
-          <VolatilitySurfaceChart data={chartData} loading={loading} />
+          <Suspense
+            fallback={
+              <GlassPanel className="chart-skeleton-container">
+                <div className="chart-header-skeleton">
+                  <Skeleton variant="text" width={250} height={32} className="mb-2" />
+                  <Skeleton variant="text" width={350} height={20} />
+                </div>
+                <Skeleton
+                  variant="rect"
+                  width="100%"
+                  height={600}
+                  className="chart-canvas-skeleton"
+                />
+                <div className="chart-controls-skeleton">
+                  <Skeleton variant="text" width={300} height={20} />
+                </div>
+              </GlassPanel>
+            }
+          >
+            <VolatilitySurfaceChart data={chartData} loading={loading} />
+          </Suspense>
         )}
       </AnimatedContainer>
     </div>
