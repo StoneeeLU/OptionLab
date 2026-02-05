@@ -2,6 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import health, options, analysis, watchlist, export, volatility
+from app.core.config import get_settings
 from app.core.error_handlers import setup_exception_handlers
 from app.core.performance import add_performance_middleware
 import logging
@@ -19,9 +20,10 @@ app = FastAPI(
 )
 
 # CORS middleware for frontend
+settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
