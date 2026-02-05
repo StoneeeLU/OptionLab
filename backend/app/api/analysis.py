@@ -1,4 +1,5 @@
 """Analysis endpoints router."""
+import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
@@ -11,6 +12,10 @@ from app.services.analysis.option_analyzer import OptionAnalyzer
 from app.services.analysis.strategy import StrategyRecognizer
 from app.services.analysis.combination import CombinationCalculator
 from app.services.analysis.pnl import PnLCalculator
+from app.core.config import get_settings
+
+logger = logging.getLogger(__name__)
+settings = get_settings()
 
 router = APIRouter(prefix="/api/analysis", tags=["analysis"])
 
@@ -146,9 +151,13 @@ async def analyze_single_option(request: SingleOptionAnalysisRequest):
         return analysis
         
     except Exception as e:
+        logger.exception("Analysis failed")
+        detail = "Analysis failed"
+        if settings.DEBUG_ERRORS:
+            detail = f"{detail}: {str(e)}"
         raise HTTPException(
             status_code=500,
-            detail=f"Analysis failed: {str(e)}"
+            detail=detail
         )
 
 
@@ -220,9 +229,13 @@ async def get_volatility_surface(request: VolatilitySurfaceRequest):
         )
         
     except Exception as e:
+        logger.exception("Surface calculation failed")
+        detail = "Surface calculation failed"
+        if settings.DEBUG_ERRORS:
+            detail = f"{detail}: {str(e)}"
         raise HTTPException(
             status_code=500,
-            detail=f"Surface calculation failed: {str(e)}"
+            detail=detail
         )
 
 
@@ -332,9 +345,13 @@ async def analyze_combination(request: CombinationRequest):
         )
         
     except Exception as e:
+        logger.exception("Combination analysis failed")
+        detail = "Combination analysis failed"
+        if settings.DEBUG_ERRORS:
+            detail = f"{detail}: {str(e)}"
         raise HTTPException(
             status_code=500,
-            detail=f"Combination analysis failed: {str(e)}"
+            detail=detail
         )
 
 
