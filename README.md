@@ -180,6 +180,8 @@ npm run dev
 
 ## 🐳 Docker
 
+### Production Mode
+
 ```bash
 # Build and start
 docker compose up --build
@@ -197,6 +199,18 @@ docker compose down
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:3000 |
+| Backend | http://localhost:8000 |
+
+### Development Mode (Hot Reload)
+
+```bash
+# Start with dev overrides
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+| Service | URL |
+|---------|-----|
+| Frontend (Dev) | http://localhost:5173 |
 | Backend | http://localhost:8000 |
 
 ---
@@ -279,7 +293,9 @@ pytest -v                 # Verbose
 ### Frontend
 ```bash
 cd frontend
-npm test                  # Run all tests
+npm test                  # Unit/Component tests (excludes e2e/**)
+npm run e2e               # End-to-end tests (Playwright)
+npx playwright install chromium # Install browser for E2E
 npm test -- --ui          # With Vitest UI
 npm test -- --coverage    # With coverage
 ```
@@ -306,7 +322,7 @@ npm test -- --coverage    # With coverage
 | Build | Vite 7 |
 | Routing | React Router 7 |
 | State | Zustand |
-| Charts | ECharts 6 + echarts-gl |
+| Charts | ECharts 5 + echarts-gl |
 | Animation | Framer Motion |
 | HTTP | Axios |
 | Testing | Vitest, React Testing Library |
@@ -323,7 +339,13 @@ DATABASE_URL=backend/data/optionlab.db
 DATA_PROVIDER=yfinance
 LOG_LEVEL=INFO
 RISK_FREE_RATE=0.05
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+DEBUG_ERRORS=false
 ```
+
+- `DATA_PROVIDER`: Supported providers (e.g., `yfinance`).
+- `CORS_ALLOWED_ORIGINS`: Comma-separated list of allowed origins for browser access.
+- `DEBUG_ERRORS`: If `true`, API error responses include detailed traceback (default `false`).
 
 ---
 
