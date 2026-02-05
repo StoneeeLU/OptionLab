@@ -88,19 +88,27 @@ describe('OptionsPage', () => {
   });
 
   it('should display loading state while fetching data', async () => {
-    const user = userEvent.setup();
-    vi.mocked(api.getOptionChain).mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve(mockOptionChain), 100))
-    );
+    // We use a controlled promise to test the loading state deterministically.
+    let resolveChain!: (value: OptionChain) => void;
+    const chainPromise = new Promise<OptionChain>((resolve) => {
+      resolveChain = resolve;
+    });
+    vi.mocked(api.getOptionChain).mockReturnValue(chainPromise);
 
     renderWithRouter(<OptionsPage />);
 
+    const user = userEvent.setup();
     const input = screen.getByPlaceholderText(/enter symbol/i);
     await user.type(input, 'AAPL');
     await user.keyboard('{Enter}');
 
+    // The component should show skeletons while the promise is pending.
     expect(screen.getAllByRole('status').length).toBeGreaterThan(0);
 
+    // Now we resolve the promise.
+    resolveChain(mockOptionChain);
+
+    // And wait for the skeletons to disappear.
     await waitFor(() => {
       expect(screen.queryAllByRole('status')).toHaveLength(0);
     });

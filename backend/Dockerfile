@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
+# Create a non-root user
+RUN useradd -u 1000 -m appuser
+
 # Copy requirements first for better layer caching
 COPY pyproject.toml ./
 
@@ -19,11 +22,14 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY app ./app
 
-# Create data directory for SQLite
-RUN mkdir -p /app/data
+# Create data directory for SQLite and set permissions
+RUN mkdir -p /app/data && chown -R appuser:appuser /app
 
 # Expose port
 EXPOSE 8000
+
+# Switch to non-root user
+USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

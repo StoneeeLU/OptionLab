@@ -180,6 +180,8 @@ npm run dev
 
 ## 🐳 Docker 部署
 
+### 生产模式
+
 ```bash
 # 构建并启动
 docker compose up --build
@@ -197,6 +199,18 @@ docker compose down
 | 服务 | 地址 |
 |------|------|
 | 前端界面 | http://localhost:3000 |
+| 后端 API | http://localhost:8000 |
+
+### 开发模式 (热重载)
+
+```bash
+# 使用开发配置启动
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+```
+
+| 服务 | 地址 |
+|------|------|
+| 前端界面 (开发) | http://localhost:5173 |
 | 后端 API | http://localhost:8000 |
 
 ---
@@ -279,7 +293,9 @@ pytest -v                 # 详细输出
 ### 前端测试
 ```bash
 cd frontend
-npm test                  # 运行所有测试
+npm test                  # 单元/组件测试 (排除 e2e/**)
+npm run e2e               # 端到端测试 (Playwright)
+npx playwright install chromium # 安装 E2E 所需浏览器
 npm test -- --ui          # 使用 Vitest UI
 npm test -- --coverage    # 带覆盖率
 ```
@@ -306,7 +322,7 @@ npm test -- --coverage    # 带覆盖率
 | 构建 | Vite 7 |
 | 路由 | React Router 7 |
 | 状态 | Zustand |
-| 图表 | ECharts 6 + echarts-gl |
+| 图表 | ECharts 5 + echarts-gl |
 | 动画 | Framer Motion |
 | 请求 | Axios |
 | 测试 | Vitest, React Testing Library |
@@ -323,7 +339,13 @@ DATABASE_URL=backend/data/optionlab.db
 DATA_PROVIDER=yfinance
 LOG_LEVEL=INFO
 RISK_FREE_RATE=0.05
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+DEBUG_ERRORS=false
 ```
+
+- `DATA_PROVIDER`: 指定数据提供商 (如 `yfinance`)。
+- `CORS_ALLOWED_ORIGINS`: 允许跨域访问的源列表 (逗号分隔)。
+- `DEBUG_ERRORS`: 是否在 API 错误响应中包含详细堆栈追踪 (默认 `false`)。
 
 ---
 

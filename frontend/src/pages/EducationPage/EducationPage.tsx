@@ -12,16 +12,17 @@ import { IVChapter } from '../../components/Education/chapters/IVChapter'
 import { StrategiesChapter } from '../../components/Education/chapters/StrategiesChapter'
 import { I18nProvider, useI18n } from '../../i18n/I18nContext'
 import { LanguageToggle } from '../../i18n/LanguageToggle'
-import { EducationSidebar, CHAPTERS } from '../../components/Education/Sidebar/EducationSidebar'
+import { EducationSidebar } from '../../components/Education/Sidebar/EducationSidebar'
+import { CHAPTERS, type ChapterId } from '../../constants/education'
 import './EducationPage.css'
 
 function EducationPageInner() {
   const { language } = useI18n()
   const shouldReduceMotion = useReducedMotion()
-  const [activeTab, setActiveTab] = useState<string>(() => {
+  const [activeTab, setActiveTab] = useState<ChapterId>(() => {
     const hash = window.location.hash.replace('#', '')
-    if (hash && CHAPTERS.some(c => c.id === hash)) {
-      return hash
+    if (hash && CHAPTERS.some((c: { id: string }) => c.id === hash)) {
+      return hash as ChapterId
     }
     return 'basics'
   })
@@ -35,7 +36,7 @@ function EducationPageInner() {
   const heroTextY = useSpring(heroTextYBase, { stiffness: 120, damping: 26 })
 
 
-  const handleTabChange = (id: string) => {
+  const handleTabChange = (id: ChapterId) => {
     setActiveTab(id)
     window.history.pushState(null, '', `#${id}`)
     window.scrollTo({ top: 0, behavior: 'smooth' })

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 import { calculateGreeks } from '../../../utils/blackScholes'
@@ -108,6 +108,65 @@ export function StrategyBuilder() {
 
   const payoffLegs = useMemo(() => legs.map(toPayoffLeg), [legs])
 
+  const handleSpotChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((p) => ({ ...p, spot: clamp(Number(e.target.value), 0, 200) }))
+  }, [])
+
+  const handleRateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((p) => ({ ...p, rate: clamp(Number(e.target.value), 0, 0.2) }))
+  }, [])
+
+  const handleVolatilityChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((p) => ({ ...p, volatility: clamp(Number(e.target.value), 0, 2) }))
+  }, [])
+
+  const handleTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs((p) => ({ ...p, time: clamp(Number(e.target.value), 0, 2) }))
+  }, [])
+
+  const handleAddLeg = useCallback(() => {
+    setLegs((prev) => [
+      ...prev,
+      {
+        id: nextId(),
+        type: 'call',
+        side: 'buy',
+        quantity: 1,
+        strike: 110,
+      },
+    ])
+  }, [])
+
+  const handleRemoveLeg = useCallback((id: string) => {
+    setLegs((prev) => prev.filter((l) => l.id !== id))
+  }, [])
+
+  const handleLegSideChange = useCallback((id: string, side: Leg['side']) => {
+    setLegs((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, side } : l)),
+    )
+  }, [])
+
+  const handleLegTypeChange = useCallback((id: string, type: OptionType) => {
+    setLegs((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, type } : l)),
+    )
+  }, [])
+
+  const handleLegQtyChange = useCallback((id: string, quantity: number) => {
+    setLegs((prev) =>
+      prev.map((l) =>
+        l.id === id ? { ...l, quantity: clamp(quantity, 1, 100) } : l,
+      ),
+    )
+  }, [])
+
+  const handleLegStrikeChange = useCallback((id: string, strike: number) => {
+    setLegs((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, strike: clamp(strike, 0, 1000) } : l)),
+    )
+  }, [])
+
   const labels = {
     title: language === 'zh' ? '策略构建器' : 'Strategy Builder',
     subtitle:
@@ -154,7 +213,7 @@ export function StrategyBuilder() {
             max={200}
             step={1}
             value={inputs.spot}
-            onChange={(e) => setInputs((p) => ({ ...p, spot: clamp(Number(e.target.value), 0, 200) }))}
+            onChange={handleSpotChange}
           />
         </div>
         <div className="input">
@@ -167,7 +226,7 @@ export function StrategyBuilder() {
             max={0.2}
             step={0.001}
             value={inputs.rate}
-            onChange={(e) => setInputs((p) => ({ ...p, rate: clamp(Number(e.target.value), 0, 0.2) }))}
+            onChange={handleRateChange}
           />
         </div>
         <div className="input">
@@ -180,7 +239,7 @@ export function StrategyBuilder() {
             max={2}
             step={0.01}
             value={inputs.volatility}
-            onChange={(e) => setInputs((p) => ({ ...p, volatility: clamp(Number(e.target.value), 0, 2) }))}
+            onChange={handleVolatilityChange}
           />
         </div>
         <div className="input">
@@ -193,7 +252,7 @@ export function StrategyBuilder() {
             max={2}
             step={0.01}
             value={inputs.time}
-            onChange={(e) => setInputs((p) => ({ ...p, time: clamp(Number(e.target.value), 0, 2) }))}
+            onChange={handleTimeChange}
           />
         </div>
       </div>
@@ -205,18 +264,7 @@ export function StrategyBuilder() {
             type="button"
             data-testid="add-leg"
             className="add-leg"
-            onClick={() =>
-              setLegs((prev) => [
-                ...prev,
-                {
-                  id: nextId(),
-                  type: 'call',
-                  side: 'buy',
-                  quantity: 1,
-                  strike: 110,
-                },
-              ])
-            }
+            onClick={handleAddLeg}
           >
             {labels.add}
           </button>
@@ -239,74 +287,56 @@ export function StrategyBuilder() {
                 data-testid="leg-row"
                 data-leg-id={leg.id}
               >
-                <div>
-                  <select
-                    data-testid={`leg-side-${leg.id}`}
-                    value={leg.side}
-                    onChange={(e) =>
-                      setLegs((prev) =>
-                        prev.map((l) => (l.id === leg.id ? { ...l, side: e.target.value as Leg['side'] } : l)),
-                      )
-                    }
-                  >
-                    <option value="buy">{labels.buy}</option>
-                    <option value="sell">{labels.sell}</option>
-                  </select>
-                </div>
-                <div>
-                  <select
-                    data-testid={`leg-type-${leg.id}`}
-                    value={leg.type}
-                    onChange={(e) =>
-                      setLegs((prev) =>
-                        prev.map((l) => (l.id === leg.id ? { ...l, type: e.target.value as OptionType } : l)),
-                      )
-                    }
-                  >
-                    <option value="call">{labels.call}</option>
-                    <option value="put">{labels.put}</option>
-                  </select>
-                </div>
-                <div>
-                  <input
-                    data-testid={`leg-qty-${leg.id}`}
-                    type="number"
-                    min={1}
-                    step={1}
-                    value={leg.quantity}
-                    onChange={(e) =>
-                      setLegs((prev) =>
-                        prev.map((l) =>
-                          l.id === leg.id ? { ...l, quantity: clamp(Number(e.target.value), 1, 100) } : l,
-                        ),
-                      )
-                    }
-                  />
-                </div>
-                <div>
-                  <input
-                    data-testid={`leg-strike-${leg.id}`}
-                    type="number"
-                    min={0}
-                    step={1}
-                    value={leg.strike}
-                    onChange={(e) =>
-                      setLegs((prev) =>
-                        prev.map((l) => (l.id === leg.id ? { ...l, strike: clamp(Number(e.target.value), 0, 1000) } : l)),
-                      )
-                    }
-                  />
-                </div>
-                <div className="legs-actions">
-                  <button
-                    type="button"
-                    data-testid="remove-leg"
-                    className="remove-leg"
-                    onClick={() => setLegs((prev) => prev.filter((l) => l.id !== leg.id))}
-                  >
-                    {labels.remove}
-                  </button>
-                </div>
+                 <div>
+                   <select
+                     data-testid={`leg-side-${leg.id}`}
+                     value={leg.side}
+                     onChange={(e) => handleLegSideChange(leg.id, e.target.value as Leg['side'])}
+                   >
+                     <option value="buy">{labels.buy}</option>
+                     <option value="sell">{labels.sell}</option>
+                   </select>
+                 </div>
+                 <div>
+                   <select
+                     data-testid={`leg-type-${leg.id}`}
+                     value={leg.type}
+                     onChange={(e) => handleLegTypeChange(leg.id, e.target.value as OptionType)}
+                   >
+                     <option value="call">{labels.call}</option>
+                     <option value="put">{labels.put}</option>
+                   </select>
+                 </div>
+                 <div>
+                   <input
+                     data-testid={`leg-qty-${leg.id}`}
+                     type="number"
+                     min={1}
+                     step={1}
+                     value={leg.quantity}
+                     onChange={(e) => handleLegQtyChange(leg.id, Number(e.target.value))}
+                   />
+                 </div>
+                 <div>
+                   <input
+                     data-testid={`leg-strike-${leg.id}`}
+                     type="number"
+                     min={0}
+                     step={1}
+                     value={leg.strike}
+                     onChange={(e) => handleLegStrikeChange(leg.id, Number(e.target.value))}
+                   />
+                 </div>
+                 <div className="legs-actions">
+                   <button
+                     type="button"
+                     data-testid="remove-leg"
+                     className="remove-leg"
+                     onClick={() => handleRemoveLeg(leg.id)}
+                   >
+                     {labels.remove}
+                   </button>
+                 </div>
               </div>
             ))
           ) : (
@@ -327,11 +357,7 @@ export function StrategyBuilder() {
                     <select
                       data-testid={`leg-side-${leg.id}`}
                       value={leg.side}
-                      onChange={(e) =>
-                        setLegs((prev) =>
-                          prev.map((l) => (l.id === leg.id ? { ...l, side: e.target.value as Leg['side'] } : l)),
-                        )
-                      }
+                      onChange={(e) => handleLegSideChange(leg.id, e.target.value as Leg['side'])}
                     >
                       <option value="buy">{labels.buy}</option>
                       <option value="sell">{labels.sell}</option>
@@ -341,11 +367,7 @@ export function StrategyBuilder() {
                     <select
                       data-testid={`leg-type-${leg.id}`}
                       value={leg.type}
-                      onChange={(e) =>
-                        setLegs((prev) =>
-                          prev.map((l) => (l.id === leg.id ? { ...l, type: e.target.value as OptionType } : l)),
-                        )
-                      }
+                      onChange={(e) => handleLegTypeChange(leg.id, e.target.value as OptionType)}
                     >
                       <option value="call">{labels.call}</option>
                       <option value="put">{labels.put}</option>
@@ -358,13 +380,7 @@ export function StrategyBuilder() {
                       min={1}
                       step={1}
                       value={leg.quantity}
-                      onChange={(e) =>
-                        setLegs((prev) =>
-                          prev.map((l) =>
-                            l.id === leg.id ? { ...l, quantity: clamp(Number(e.target.value), 1, 100) } : l,
-                          ),
-                        )
-                      }
+                      onChange={(e) => handleLegQtyChange(leg.id, Number(e.target.value))}
                     />
                   </div>
                   <div>
@@ -374,11 +390,7 @@ export function StrategyBuilder() {
                       min={0}
                       step={1}
                       value={leg.strike}
-                      onChange={(e) =>
-                        setLegs((prev) =>
-                          prev.map((l) => (l.id === leg.id ? { ...l, strike: clamp(Number(e.target.value), 0, 1000) } : l)),
-                        )
-                      }
+                      onChange={(e) => handleLegStrikeChange(leg.id, Number(e.target.value))}
                     />
                   </div>
                   <div className="legs-actions">
@@ -386,7 +398,7 @@ export function StrategyBuilder() {
                       type="button"
                       data-testid="remove-leg"
                       className="remove-leg"
-                      onClick={() => setLegs((prev) => prev.filter((l) => l.id !== leg.id))}
+                      onClick={() => handleRemoveLeg(leg.id)}
                     >
                       {labels.remove}
                     </button>

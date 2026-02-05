@@ -6,7 +6,9 @@ from app.services.providers.base import DataProvider
 from app.services.cache.cached_provider import CachedDataProvider
 from app.services.providers.yfinance_provider import YFinanceProvider
 from app.services.history_service import OptionHistoryService
+from app.core.config import get_settings
 from app.models.chain import OptionChain
+
 from app.models.option import Option
 
 router = APIRouter(prefix="/api/options", tags=["options"])
@@ -14,8 +16,16 @@ router = APIRouter(prefix="/api/options", tags=["options"])
 
 def get_data_provider() -> DataProvider:
     """Get cached data provider instance."""
-    base_provider = YFinanceProvider()
+    settings = get_settings()
+    provider_name = settings.DATA_PROVIDER.lower()
+    
+    if provider_name == "yfinance":
+        base_provider = YFinanceProvider()
+    else:
+        raise ValueError(f"Unsupported DATA_PROVIDER: {settings.DATA_PROVIDER}")
+        
     return CachedDataProvider(base_provider)
+
 
 
 @router.get("/{symbol}/chain", response_model=OptionChain)

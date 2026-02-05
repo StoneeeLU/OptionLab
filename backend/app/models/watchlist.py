@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -17,7 +17,7 @@ class WatchlistItem(Base):
     item_type = Column(String, nullable=False)  # "stock" or "option"
     
     # Option-specific fields (null for stocks)
-    strike = Column(Integer, nullable=True)
+    strike = Column(Float, nullable=True)
     expiry = Column(String, nullable=True)
     option_type = Column(String, nullable=True)  # "call" or "put"
     

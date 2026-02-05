@@ -114,10 +114,12 @@ describe('OptionsChainTable', () => {
     // Hover
     fireEvent.mouseEnter(ivCell!);
 
-    // Should show loading immediately
-    expect(screen.getByText('Analyzing...')).toBeInTheDocument();
+    // Should show loading after debounce
+    await waitFor(() => {
+      expect(screen.getByText('Analyzing...')).toBeInTheDocument();
+    }, { timeout: 1000 });
 
-    // Wait for promise to resolve (debounce 150ms + async fetch)
+    // Wait for promise to resolve (debounce in useOptionAnalysis + async fetch)
     await waitFor(() => {
       expect(analyzeOption).toHaveBeenCalled();
     }, { timeout: 1000 });
